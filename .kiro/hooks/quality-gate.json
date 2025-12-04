@@ -1,0 +1,8 @@
+{
+  "name": "Quality Gate Check",
+  "description": "Check code quality before committing",
+  "trigger": "manual",
+  "action": "sendMessage",
+  "message": "Run quality checks on all modified files and report any issues with score below 70",
+  "enabled": true
+}

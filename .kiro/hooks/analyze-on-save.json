@@ -1,0 +1,137 @@
+{
+  "name": "Refactor Codex MCP Tools",
+  "version": "1.0.0",
+  "description": "AST-based code analysis and refactoring tools for JavaScript/TypeScript and Python",
+  
+  "tools": {
+    "analyze_code": {
+      "description": "Comprehensive code analysis with quality scores, complexity metrics, and code smell detection",
+      "method": "POST",
+      "url": "http://localhost:4000/analyze",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "code": "${code}",
+          "filename": "${filename}"
+        }
+      },
+      "response": {
+        "format": "json",
+        "fields": ["qualityScore", "totalSmells", "functions", "summary"]
+      },
+      "supportedLanguages": ["javascript", "typescript", "python"],
+      "timeout": 30000
+    },
+    
+    "suggest_refactors": {
+      "description": "Suggests extract function refactorings with before/after code and risk assessment",
+      "method": "POST",
+      "url": "http://localhost:4000/suggest",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "code": "${code}",
+          "filename": "${filename}"
+        }
+      },
+      "response": {
+        "format": "json",
+        "fields": ["suggestions", "summary"]
+      },
+      "supportedLanguages": ["javascript", "typescript", "python"],
+      "timeout": 30000
+    },
+    
+    "detect_code_smells": {
+      "description": "Focused detection of code smells and anti-patterns",
+      "method": "POST",
+      "url": "http://localhost:4000/analyze",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "code": "${code}",
+          "filename": "${filename}"
+        }
+      },
+      "response": {
+        "format": "json",
+        "fields": ["totalSmells", "smellsByType", "functions"],
+        "filter": "smells_only"
+      },
+      "supportedLanguages": ["javascript", "typescript", "python"],
+      "timeout": 30000
+    },
+    
+    "get_quality_score": {
+      "description": "Quick code quality score calculation (0-100)",
+      "method": "POST",
+      "url": "http://localhost:4000/analyze",
+      "request": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "code": "${code}",
+          "filename": "${filename}"
+        }
+      },
+      "response": {
+        "format": "json",
+        "fields": ["qualityScore", "healthStatus", "summary"],
+        "filter": "score_only"
+      },
+      "supportedLanguages": ["javascript", "typescript", "python"],
+      "timeout": 30000
+    }
+  },
+  
+  "automation": {
+    "onSave": {
+      "description": "Auto-analyze code when files are saved",
+      "enabled": false,
+      "filePatterns": ["*.js", "*.jsx", "*.ts", "*.tsx", "*.py"],
+      "action": "analyze_code",
+      "showNotification": true
+    },
+    
+    "onPaste": {
+      "description": "Quick quality check when code is pasted",
+      "enabled": false,
+      "minLength": 100,
+      "action": "get_quality_score",
+      "showNotification": false
+    }
+  },
+  
+  "settings": {
+    "backend": {
+      "host": "localhost",
+      "port": 4000,
+      "protocol": "http"
+    },
+    "analysis": {
+      "qualityThreshold": 70,
+      "maxSuggestions": 3,
+      "autoFormat": true
+    },
+    "ui": {
+      "showDiffPreview": true,
+      "highlightSmells": true,
+      "colorScheme": "spooky"
+    }
+  },
+  
+  "metadata": {
+    "author": "Refactor Codex Team",
+    "repository": "https://github.com/yourusername/refactor-codex",
+    "documentation": "https://github.com/yourusername/refactor-codex#readme",
+    "category": "code-quality",
+    "tags": ["ast", "refactoring", "code-analysis", "multi-language"]
+  }
+}

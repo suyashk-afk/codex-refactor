@@ -1,0 +1,673 @@
+/* ================================
+   🧟 THE RESURRECTION CHAMBER
+   Where Dead Code Comes Back to Life
+   ================================ */
+
+:root {
+  --blood-red: #8b0000;
+  --toxic-green: #39ff14;
+  --corpse-blue: #4a5568;
+  --bone-white: #f5f5dc;
+  --shadow-black: #0a0a0a;
+  --rust-orange: #cc5500;
+  --electric-purple: #9d00ff;
+}
+
+/* ================================
+   CURSED BACKGROUND
+   ================================ */
+
+body {
+  background: #000000;
+  font-family: "Inter", -apple-system, sans-serif;
+  color: var(--bone-white);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Ancient stone walls with blood stains */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    /* Blood drips */
+    radial-gradient(ellipse at 10% 20%, rgba(139, 0, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 30%, rgba(139, 0, 0, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(139, 0, 0, 0.06) 0%, transparent 50%),
+    /* Stone texture */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 47px,
+      rgba(40, 40, 40, 0.3) 47px,
+      rgba(40, 40, 40, 0.3) 49px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 94px,
+      rgba(40, 40, 40, 0.3) 94px,
+      rgba(40, 40, 40, 0.3) 96px
+    ),
+    /* Base gradient */
+    linear-gradient(180deg, #0d0d0d 0%, #000000 50%, #0a0000 100%);
+  pointer-events: none;
+  z-index: 0;
+  animation: wallPulse 8s ease-in-out infinite;
+}
+
+@keyframes wallPulse {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; }
+}
+
+/* Toxic fog rolling in */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 70%, rgba(57, 255, 20, 0.04) 0%, transparent 70%),
+    radial-gradient(ellipse at 70% 30%, rgba(157, 0, 255, 0.03) 0%, transparent 70%),
+    radial-gradient(ellipse at 50% 50%, rgba(139, 0, 0, 0.02) 0%, transparent 80%);
+  pointer-events: none;
+  z-index: 1;
+  animation: toxicFog 20s ease-in-out infinite;
+}
+
+@keyframes toxicFog {
+  0%, 100% { 
+    opacity: 0.6;
+    transform: scale(1) rotate(0deg);
+  }
+  50% { 
+    opacity: 0.9;
+    transform: scale(1.1) rotate(2deg);
+  }
+}
+
+/* ================================
+   FLOATING PARTICLES (Dust & Embers)
+   ================================ */
+
+.codex-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255, 100, 0, 0.3) 0%, transparent 1%),
+    radial-gradient(circle at 80% 70%, rgba(255, 100, 0, 0.2) 0%, transparent 1%),
+    radial-gradient(circle at 50% 50%, rgba(255, 100, 0, 0.25) 0%, transparent 1%),
+    radial-gradient(circle at 10% 80%, rgba(57, 255, 20, 0.2) 0%, transparent 1%),
+    radial-gradient(circle at 90% 20%, rgba(57, 255, 20, 0.15) 0%, transparent 1%);
+  background-size: 200% 200%;
+  pointer-events: none;
+  z-index: 100;
+  animation: floatingParticles 15s linear infinite;
+  opacity: 0.6;
+}
+
+@keyframes floatingParticles {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
+}
+
+/* ================================
+   MAIN CONTAINER - THE CHAMBER
+   ================================ */
+
+.codex-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 60px 40px;
+  min-height: calc(100vh - 80px);
+  position: relative;
+  z-index: 2;
+  
+  /* Dark ritual chamber */
+  background: 
+    /* Pentagram pattern (subtle) */
+    radial-gradient(circle at 50% 50%, rgba(139, 0, 0, 0.05) 0%, transparent 40%),
+    /* Main background */
+    linear-gradient(135deg, 
+      rgba(20, 10, 10, 0.98) 0%, 
+      rgba(10, 5, 10, 0.99) 50%,
+      rgba(15, 5, 5, 0.98) 100%
+    );
+  
+  border: 2px solid rgba(139, 0, 0, 0.3);
+  border-radius: 8px;
+  
+  box-shadow: 
+    /* Inner glow */
+    inset 0 0 60px rgba(139, 0, 0, 0.1),
+    inset 0 2px 4px rgba(255, 255, 255, 0.02),
+    /* Outer shadows */
+    0 0 80px rgba(139, 0, 0, 0.3),
+    0 20px 60px rgba(0, 0, 0, 0.9),
+    /* Electrical glow */
+    0 0 120px rgba(57, 255, 20, 0.1);
+  
+  animation: chamberBreathing 6s ease-in-out infinite;
+}
+
+@keyframes chamberBreathing {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 
+      inset 0 0 60px rgba(139, 0, 0, 0.1),
+      0 0 80px rgba(139, 0, 0, 0.3),
+      0 20px 60px rgba(0, 0, 0, 0.9),
+      0 0 120px rgba(57, 255, 20, 0.1);
+  }
+  50% { 
+    transform: scale(1.002);
+    box-shadow: 
+      inset 0 0 80px rgba(139, 0, 0, 0.15),
+      0 0 100px rgba(139, 0, 0, 0.4),
+      0 20px 60px rgba(0, 0, 0, 0.9),
+      0 0 140px rgba(57, 255, 20, 0.15);
+  }
+}
+
+/* ================================
+   HERO SECTION - THE ALTAR
+   ================================ */
+
+.hero-section {
+  text-align: center;
+  margin-bottom: 60px;
+  padding: 40px 20px;
+  position: relative;
+  background: 
+    radial-gradient(ellipse at 50% 50%, rgba(139, 0, 0, 0.08) 0%, transparent 70%);
+  border-bottom: 1px solid rgba(139, 0, 0, 0.2);
+}
+
+.hero-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  display: inline-block;
+  filter: drop-shadow(0 0 20px rgba(57, 255, 20, 0.6));
+  animation: iconPulse 3s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% { 
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 20px rgba(57, 255, 20, 0.6));
+  }
+  50% { 
+    transform: scale(1.1) rotate(5deg);
+    filter: drop-shadow(0 0 40px rgba(57, 255, 20, 0.9));
+  }
+}
+
+.codex-title {
+  font-size: 56px;
+  font-weight: 900;
+  margin: 0 0 16px 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  position: relative;
+  display: inline-block;
+}
+
+.title-text {
+  background: linear-gradient(
+    135deg,
+    var(--bone-white) 0%,
+    var(--toxic-green) 50%,
+    var(--bone-white) 100%
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: titleShimmer 4s ease-in-out infinite;
+  text-shadow: 
+    0 0 30px rgba(57, 255, 20, 0.5),
+    0 0 60px rgba(57, 255, 20, 0.3);
+}
+
+.title-accent {
+  background: linear-gradient(
+    135deg,
+    var(--blood-red) 0%,
+    var(--rust-orange) 50%,
+    var(--blood-red) 100%
+  );
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: titleShimmer 4s ease-in-out infinite reverse;
+  text-shadow: 
+    0 0 30px rgba(139, 0, 0, 0.8),
+    0 0 60px rgba(139, 0, 0, 0.4);
+}
+
+@keyframes titleShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.codex-subtitle {
+  font-size: 18px;
+  color: rgba(245, 245, 220, 0.7);
+  font-weight: 300;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 0;
+  text-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
+}
+
+/* ================================
+   BUTTONS - RITUAL ACTIVATION
+   ================================ */
+
+.primary-btn,
+.secondary-btn,
+.export-btn,
+.ai-explain-btn {
+  padding: 16px 32px;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, var(--toxic-green) 0%, #2d9f00 100%);
+  color: #000;
+  box-shadow: 
+    0 4px 15px rgba(57, 255, 20, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.primary-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+}
+
+.primary-btn:hover::before {
+  transform: translateX(100%);
+}
+
+.primary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 25px rgba(57, 255, 20, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 0 40px rgba(57, 255, 20, 0.4);
+}
+
+.primary-btn:active {
+  transform: translateY(0);
+}
+
+.secondary-btn {
+  background: linear-gradient(135deg, var(--blood-red) 0%, #660000 100%);
+  color: var(--bone-white);
+  box-shadow: 
+    0 4px 15px rgba(139, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.secondary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 25px rgba(139, 0, 0, 0.6),
+    0 0 40px rgba(139, 0, 0, 0.4);
+}
+
+/* ================================
+   CIRCULAR PROGRESS - LIFE FORCE
+   ================================ */
+
+.circular-progress {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  animation: progressPulse 2s ease-in-out infinite;
+}
+
+@keyframes progressPulse {
+  0%, 100% { 
+    transform: scale(1);
+    filter: drop-shadow(0 0 20px rgba(57, 255, 20, 0.4));
+  }
+  50% { 
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 40px rgba(57, 255, 20, 0.8));
+  }
+}
+
+.progress-ring {
+  filter: drop-shadow(0 0 10px currentColor);
+  animation: ringGlow 2s ease-in-out infinite;
+}
+
+@keyframes ringGlow {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+.score-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.score-number {
+  font-size: 48px;
+  font-weight: 900;
+  display: block;
+  text-shadow: 
+    0 0 20px currentColor,
+    0 0 40px currentColor;
+  animation: numberFlicker 3s ease-in-out infinite;
+}
+
+@keyframes numberFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.9; }
+  51% { opacity: 1; }
+  52% { opacity: 0.95; }
+  53% { opacity: 1; }
+}
+
+/* ================================
+   ELECTRICAL EFFECTS
+   ================================ */
+
+.electrical-spark {
+  position: fixed;
+  width: 4px;
+  height: 4px;
+  background: var(--toxic-green);
+  border-radius: 50%;
+  box-shadow: 
+    0 0 10px var(--toxic-green),
+    0 0 20px var(--toxic-green),
+    0 0 30px var(--toxic-green);
+  animation: sparkTravel 3s linear infinite;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+@keyframes sparkTravel {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--spark-x, 100px), var(--spark-y, 100px)) scale(0);
+    opacity: 0;
+  }
+}
+
+/* ================================
+   FLICKERING LIGHTS
+   ================================ */
+
+.flickering-light {
+  position: fixed;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(57, 255, 20, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: lightFlicker 4s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes lightFlicker {
+  0%, 100% { opacity: 0.3; }
+  10% { opacity: 0.1; }
+  11% { opacity: 0.4; }
+  20% { opacity: 0.2; }
+  50% { opacity: 0.5; }
+  51% { opacity: 0.1; }
+  52% { opacity: 0.4; }
+  80% { opacity: 0.3; }
+}
+
+/* ================================
+   COPPER PIPES - CONDUITS
+   ================================ */
+
+.copper-pipe {
+  position: fixed;
+  background: linear-gradient(90deg, 
+    #b87333 0%, 
+    #cd7f32 25%, 
+    #b87333 50%, 
+    #8b5a2b 75%, 
+    #b87333 100%
+  );
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.5),
+    0 4px 8px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.pipe-top-left {
+  top: 0;
+  left: 10%;
+  width: 8px;
+  height: 200px;
+}
+
+.pipe-top-right {
+  top: 0;
+  right: 10%;
+  width: 8px;
+  height: 200px;
+}
+
+/* ================================
+   RESULTS CONTAINER - SPECIMEN DISPLAY
+   ================================ */
+
+.results-container {
+  background: 
+    radial-gradient(ellipse at 50% 0%, rgba(57, 255, 20, 0.03) 0%, transparent 50%),
+    linear-gradient(135deg, rgba(20, 20, 20, 0.6) 0%, rgba(10, 10, 10, 0.8) 100%);
+  border: 1px solid rgba(57, 255, 20, 0.2);
+  border-radius: 8px;
+  padding: 30px;
+  margin: 30px 0;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(57, 255, 20, 0.1),
+    0 0 60px rgba(57, 255, 20, 0.05);
+  animation: containerGlow 4s ease-in-out infinite;
+}
+
+@keyframes containerGlow {
+  0%, 100% { 
+    border-color: rgba(57, 255, 20, 0.2);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.6),
+      inset 0 1px 0 rgba(57, 255, 20, 0.1),
+      0 0 60px rgba(57, 255, 20, 0.05);
+  }
+  50% { 
+    border-color: rgba(57, 255, 20, 0.4);
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.6),
+      inset 0 1px 0 rgba(57, 255, 20, 0.2),
+      0 0 80px rgba(57, 255, 20, 0.1);
+  }
+}
+
+/* ================================
+   AI ASSISTANT - POSSESSED ENTITY
+   ================================ */
+
+.ai-explanation {
+  margin-top: 12px;
+  padding: 20px;
+  background: 
+    radial-gradient(ellipse at 50% 0%, rgba(157, 0, 255, 0.1) 0%, transparent 70%),
+    linear-gradient(135deg, rgba(30, 10, 40, 0.8) 0%, rgba(20, 5, 30, 0.9) 100%);
+  border-left: 3px solid var(--electric-purple);
+  border-radius: 8px;
+  animation: aiPulse 3s ease-in-out infinite;
+  box-shadow: 
+    0 4px 20px rgba(157, 0, 255, 0.3),
+    inset 0 1px 0 rgba(157, 0, 255, 0.2);
+}
+
+@keyframes aiPulse {
+  0%, 100% { 
+    box-shadow: 
+      0 4px 20px rgba(157, 0, 255, 0.3),
+      inset 0 1px 0 rgba(157, 0, 255, 0.2);
+  }
+  50% { 
+    box-shadow: 
+      0 4px 30px rgba(157, 0, 255, 0.5),
+      inset 0 1px 0 rgba(157, 0, 255, 0.3),
+      0 0 40px rgba(157, 0, 255, 0.2);
+  }
+}
+
+.ai-text {
+  color: rgba(245, 245, 220, 0.95);
+  font-size: 14px;
+  line-height: 1.8;
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  text-shadow: 0 0 10px rgba(157, 0, 255, 0.3);
+}
+
+/* ================================
+   LOADING STATES - SUMMONING
+   ================================ */
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--toxic-green);
+  border-radius: 50%;
+  animation: spinSummon 0.8s linear infinite;
+  box-shadow: 0 0 10px var(--toxic-green);
+}
+
+@keyframes spinSummon {
+  0% { 
+    transform: rotate(0deg);
+    box-shadow: 0 0 10px var(--toxic-green);
+  }
+  50% {
+    box-shadow: 0 0 20px var(--toxic-green);
+  }
+  100% { 
+    transform: rotate(360deg);
+    box-shadow: 0 0 10px var(--toxic-green);
+  }
+}
+
+/* ================================
+   WELCOME OVERLAY - AWAKENING
+   ================================ */
+
+.welcome-overlay {
+  position: fixed;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse at 50% 50%, rgba(139, 0, 0, 0.3) 0%, transparent 70%),
+    linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(10, 0, 0, 0.98) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: overlayFadeOut 2s ease-out forwards;
+}
+
+@keyframes overlayFadeOut {
+  0% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; pointer-events: none; }
+}
+
+.welcome-title {
+  font-size: 72px;
+  font-weight: 900;
+  background: linear-gradient(
+    135deg,
+    var(--toxic-green) 0%,
+    var(--bone-white) 50%,
+    var(--blood-red) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: welcomePulse 2s ease-in-out;
+  text-shadow: 
+    0 0 40px rgba(57, 255, 20, 0.6),
+    0 0 80px rgba(139, 0, 0, 0.4);
+}
+
+@keyframes welcomePulse {
+  0% { 
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ================================
+   RESPONSIVE
+   ================================ */
+
+@media (max-width: 768px) {
+  .codex-container {
+    width: 95%;
+    padding: 40px 20px;
+  }
+  
+  .codex-title {
+    font-size: 36px;
+  }
+  
+  .hero-icon {
+    font-size: 60px;
+  }
+}

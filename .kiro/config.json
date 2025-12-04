@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "codex-refactor": {
+      "command": "cmd",
+      "args": ["/c", "run_mcp.bat"],
+      "cwd": "${workspaceFolder}",
+      "autoApprove": []
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "codex-refactor": {
+      "command": "python",
+      "args": [
+        "D:\\refractor\\codex_mcp\\mcp_server.py"
+      ],
+      "disabled": false,
+      "autoApprove": [
+        "analyze_code",
+        "analyze_repository_history",
+        "analyze_repository_history",
+        "analyze_repository_history"
+      ]
+    }
+  }
+}

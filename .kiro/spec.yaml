@@ -1,0 +1,39 @@
+version: 1
+name: codex-refactor-engine
+description: >
+  An intelligent source-code refactoring engine powered by MCP.
+  Provides structural analysis, automated extraction refactors,
+  and patch-generation using AST tooling. Designed to showcase
+  Kiro’s spec-driven development.
+
+tools:
+  - name: analyze_code
+    description: Analyze JS/TS code for structure: functions, branches, nesting.
+    input:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Full source code to analyze
+      required: [code]
+    output:
+      type: object
+      properties:
+        ok: { type: boolean }
+        analysis: { type: object }
+
+  - name: suggest_refactors
+    description: Suggest AST-driven refactor opportunities and return patches.
+    input:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Full source code to refactor
+      required: [code]
+    output:
+      type: object
+      properties:
+        ok: { type: boolean }
+        suggestions: { type: array }
+

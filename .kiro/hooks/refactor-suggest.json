@@ -1,0 +1,9 @@
+{
+  "name": "Suggest Refactoring",
+  "description": "Get refactoring suggestions for the current file",
+  "trigger": "manual",
+  "action": "sendMessage",
+  "message": "Use the suggest_refactors MCP tool to analyze this file and provide refactoring suggestions",
+  "filePattern": "**/*.{js,jsx,ts,tsx,py}",
+  "enabled": true
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Auto-Analyze on Save",
+  "description": "Automatically analyze code quality when JavaScript or Python files are saved",
+  "trigger": "onFileSave",
+  "action": "sendMessage",
+  "message": "Analyze this file for code quality issues using the analyze_code MCP tool",
+  "filePattern": "**/*.{js,jsx,ts,tsx,py}",
+  "enabled": true
+}

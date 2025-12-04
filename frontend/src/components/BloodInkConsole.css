@@ -1,0 +1,442 @@
+/* ================================
+   🩸 BLOOD-INK CONSOLE
+   Gothic Horror Output Panel
+   ================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+
+.blood-ink-console {
+  position: relative;
+  background: linear-gradient(135deg, #1a1410 0%, #0d0a08 100%);
+  border: 3px solid #8b4513;
+  border-radius: 8px;
+  margin: 30px auto;
+  max-width: 1400px;
+  box-shadow: 
+    inset 0 4px 8px rgba(0, 0, 0, 0.9),
+    0 10px 40px rgba(0, 0, 0, 0.9),
+    0 0 20px rgba(139, 69, 19, 0.2);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.blood-ink-console.expanded {
+  max-height: 800px;
+}
+
+/* ================================
+   CONSOLE HEADER
+   ================================ */
+
+.console-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: linear-gradient(90deg, #0a0808 0%, #1a1410 50%, #0a0808 100%);
+  border-bottom: 2px solid #8b4513;
+  box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-icon {
+  font-size: 1.8rem;
+  filter: drop-shadow(0 0 10px rgba(139, 69, 19, 0.5));
+}
+
+.header-title {
+  font-family: 'Special Elite', 'Courier New', monospace;
+  font-size: 1.1rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #8b4513;
+  text-shadow: 0 0 10px rgba(139, 69, 19, 0.5);
+}
+
+.header-subtitle {
+  font-size: 0.75rem;
+  color: #666;
+  font-style: italic;
+  letter-spacing: 1px;
+}
+
+.header-right {
+  display: flex;
+  gap: 10px;
+}
+
+.header-btn {
+  background: rgba(139, 69, 19, 0.2);
+  border: 1px solid #8b4513;
+  color: #8b4513;
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.header-btn:hover {
+  background: rgba(139, 69, 19, 0.4);
+  transform: scale(1.1);
+}
+
+/* ================================
+   CONSOLE OUTPUT
+   ================================ */
+
+.console-output {
+  position: relative;
+  min-height: 300px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 20px;
+  background: 
+    /* Old paper texture */
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, #0d0a08 0%, #1a1410 50%, #0d0a08 100%);
+  font-family: 'Special Elite', 'Courier New', monospace;
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+
+/* Scrollbar */
+.console-output::-webkit-scrollbar {
+  width: 10px;
+}
+
+.console-output::-webkit-scrollbar-track {
+  background: #0a0808;
+  border-left: 1px solid #8b4513;
+}
+
+.console-output::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8b4513 0%, #5a2d0d 100%);
+  border-radius: 5px;
+}
+
+.console-output::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #a0522d 0%, #8b4513 100%);
+}
+
+/* ================================
+   INK STAINS
+   ================================ */
+
+.ink-stains {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ink-stain {
+  position: absolute;
+  background: radial-gradient(
+    circle,
+    rgba(139, 69, 19, 0.1) 0%,
+    rgba(139, 69, 19, 0.05) 50%,
+    transparent 100%
+  );
+  border-radius: 50%;
+  filter: blur(10px);
+}
+
+/* ================================
+   INK PARTICLES
+   ================================ */
+
+.ink-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ink-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: radial-gradient(circle, rgba(139, 69, 19, 0.6) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(1px);
+}
+
+/* ================================
+   CONSOLE LOGS
+   ================================ */
+
+.console-log {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid transparent;
+  border-radius: 4px;
+  z-index: 2;
+  transition: all 0.3s;
+}
+
+.console-log:hover {
+  background: rgba(0, 0, 0, 0.5);
+  transform: translateX(5px);
+}
+
+/* Log Types */
+.log-error {
+  border-left-color: #8b0000;
+  background: rgba(139, 0, 0, 0.1);
+  color: #ff6b6b;
+}
+
+.log-warning {
+  border-left-color: #d97706;
+  background: rgba(217, 119, 6, 0.1);
+  color: #ffb86b;
+}
+
+.log-success {
+  border-left-color: #39ff14;
+  background: rgba(57, 255, 20, 0.05);
+  color: #39ff14;
+  text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+}
+
+.log-info {
+  border-left-color: #8b4513;
+  color: #d4a574;
+}
+
+.log-default {
+  border-left-color: #666;
+  color: #999;
+}
+
+/* ================================
+   LOG ELEMENTS
+   ================================ */
+
+.log-timestamp {
+  font-size: 0.75rem;
+  color: #666;
+  font-family: 'Courier New', monospace;
+  min-width: 80px;
+  opacity: 0.7;
+}
+
+.log-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.log-message {
+  flex: 1;
+  position: relative;
+  word-break: break-word;
+}
+
+.log-details {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.5);
+  border-left: 2px solid currentColor;
+  font-size: 0.85rem;
+  opacity: 0.8;
+  border-radius: 4px;
+}
+
+/* ================================
+   BLOOD DRIP EFFECT
+   ================================ */
+
+.blood-drip {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  background: linear-gradient(to bottom, #8b0000 0%, #660000 50%, transparent 100%);
+  border-radius: 0 0 50% 50%;
+  filter: blur(0.5px);
+  pointer-events: none;
+}
+
+/* ================================
+   SCRATCH MARKS
+   ================================ */
+
+.scratch-marks {
+  position: absolute;
+  top: 50%;
+  right: -30px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  pointer-events: none;
+}
+
+.scratch {
+  width: 25px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #d97706 50%, transparent 100%);
+  transform: rotate(-15deg);
+  opacity: 0.6;
+}
+
+.scratch:nth-child(2) {
+  width: 20px;
+  transform: rotate(-10deg);
+}
+
+.scratch:nth-child(3) {
+  width: 22px;
+  transform: rotate(-20deg);
+}
+
+/* ================================
+   SUCCESS GLOW
+   ================================ */
+
+.success-glow {
+  position: absolute;
+  inset: -5px;
+  background: radial-gradient(
+    circle,
+    rgba(57, 255, 20, 0.2) 0%,
+    transparent 70%
+  );
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ================================
+   EMPTY STATE
+   ================================ */
+
+.console-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+  opacity: 0.5;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  animation: candleFlicker 2s ease-in-out infinite;
+}
+
+@keyframes candleFlicker {
+  0%, 100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  50% {
+    opacity: 0.8;
+    filter: brightness(0.9);
+  }
+}
+
+.empty-text {
+  font-size: 1.1rem;
+  color: #8b4513;
+  font-style: italic;
+  font-family: 'Special Elite', serif;
+}
+
+/* ================================
+   CONSOLE FOOTER
+   ================================ */
+
+.console-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: linear-gradient(90deg, #0a0808 0%, #1a1410 50%, #0a0808 100%);
+  border-top: 2px solid #8b4513;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.footer-stats {
+  display: flex;
+  gap: 30px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+
+.stat-icon {
+  font-size: 1rem;
+}
+
+.stat-value {
+  font-weight: 900;
+  color: #8b4513;
+  font-family: 'Courier New', monospace;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 0.75rem;
+}
+
+.footer-signature {
+  font-size: 0.75rem;
+  color: #666;
+  font-style: italic;
+  font-family: 'Special Elite', serif;
+}
+
+/* ================================
+   RESPONSIVE
+   ================================ */
+
+@media (max-width: 768px) {
+  .console-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .console-footer {
+    flex-direction: column;
+    gap: 15px;
+    align-items: flex-start;
+  }
+
+  .footer-stats {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .console-log {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .log-timestamp {
+    min-width: auto;
+  }
+}
