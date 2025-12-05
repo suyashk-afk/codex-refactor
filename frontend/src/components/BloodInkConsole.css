@@ -152,7 +152,7 @@
 }
 
 /* ================================
-   INK PARTICLES
+   INK PARTICLES (Enhanced Drift)
    ================================ */
 
 .ink-particles {
@@ -160,15 +160,40 @@
   inset: 0;
   pointer-events: none;
   z-index: 1;
+  overflow: hidden;
 }
 
 .ink-particle {
   position: absolute;
-  width: 3px;
-  height: 3px;
-  background: radial-gradient(circle, rgba(139, 69, 19, 0.6) 0%, transparent 70%);
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(
+    circle, 
+    rgba(139, 69, 19, 0.8) 0%, 
+    rgba(139, 69, 19, 0.4) 40%,
+    transparent 70%
+  );
   border-radius: 50%;
-  filter: blur(1px);
+  filter: blur(1.5px);
+  box-shadow: 0 0 8px rgba(139, 69, 19, 0.4);
+}
+
+/* Additional ink bleed effect */
+.ink-particle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(
+    circle,
+    rgba(139, 69, 19, 0.2) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  filter: blur(3px);
 }
 
 /* ================================
@@ -197,31 +222,100 @@
 /* Log Types */
 .log-error {
   border-left-color: #8b0000;
-  background: rgba(139, 0, 0, 0.1);
+  background: 
+    linear-gradient(90deg, rgba(139, 0, 0, 0.15) 0%, rgba(139, 0, 0, 0.05) 100%),
+    rgba(0, 0, 0, 0.3);
   color: #ff6b6b;
+  box-shadow: 
+    inset 3px 0 8px rgba(139, 0, 0, 0.4),
+    0 2px 8px rgba(139, 0, 0, 0.2);
+}
+
+.log-error .log-message {
+  text-shadow: 
+    0 1px 3px rgba(139, 0, 0, 0.8),
+    0 0 8px rgba(255, 107, 107, 0.4);
+  filter: drop-shadow(0 2px 4px rgba(139, 0, 0, 0.6));
 }
 
 .log-warning {
   border-left-color: #d97706;
-  background: rgba(217, 119, 6, 0.1);
+  background: 
+    linear-gradient(90deg, rgba(217, 119, 6, 0.12) 0%, rgba(217, 119, 6, 0.04) 100%),
+    rgba(0, 0, 0, 0.3);
   color: #ffb86b;
+  box-shadow: 
+    inset 3px 0 8px rgba(217, 119, 6, 0.3),
+    0 2px 8px rgba(217, 119, 6, 0.15);
+}
+
+.log-warning .log-message {
+  text-shadow: 
+    0 1px 3px rgba(217, 119, 6, 0.8),
+    0 0 6px rgba(255, 184, 107, 0.3);
 }
 
 .log-success {
   border-left-color: #39ff14;
-  background: rgba(57, 255, 20, 0.05);
+  background: 
+    linear-gradient(90deg, rgba(57, 255, 20, 0.08) 0%, rgba(57, 255, 20, 0.02) 100%),
+    rgba(0, 0, 0, 0.3);
   color: #39ff14;
-  text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
+  box-shadow: 
+    inset 3px 0 10px rgba(57, 255, 20, 0.3),
+    0 2px 12px rgba(57, 255, 20, 0.2),
+    0 0 20px rgba(57, 255, 20, 0.1);
+}
+
+.log-success .log-message {
+  text-shadow: 
+    0 0 10px rgba(57, 255, 20, 0.6),
+    0 0 20px rgba(57, 255, 20, 0.4),
+    0 1px 3px rgba(0, 0, 0, 0.8);
+  animation: eldritchGlow 2s ease-in-out infinite;
+}
+
+@keyframes eldritchGlow {
+  0%, 100% {
+    text-shadow: 
+      0 0 10px rgba(57, 255, 20, 0.6),
+      0 0 20px rgba(57, 255, 20, 0.4),
+      0 1px 3px rgba(0, 0, 0, 0.8);
+  }
+  50% {
+    text-shadow: 
+      0 0 15px rgba(57, 255, 20, 0.8),
+      0 0 30px rgba(57, 255, 20, 0.5),
+      0 1px 3px rgba(0, 0, 0, 0.8);
+  }
 }
 
 .log-info {
   border-left-color: #8b4513;
+  background: 
+    linear-gradient(90deg, rgba(139, 69, 19, 0.1) 0%, rgba(139, 69, 19, 0.03) 100%),
+    rgba(0, 0, 0, 0.3);
   color: #d4a574;
+  box-shadow: 
+    inset 3px 0 6px rgba(139, 69, 19, 0.3),
+    0 2px 6px rgba(139, 69, 19, 0.15);
+}
+
+.log-info .log-message {
+  text-shadow: 
+    0 1px 2px rgba(139, 69, 19, 0.8),
+    0 0 4px rgba(212, 165, 116, 0.3);
 }
 
 .log-default {
   border-left-color: #666;
   color: #999;
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: inset 3px 0 6px rgba(0, 0, 0, 0.4);
+}
+
+.log-default .log-message {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 /* ================================
@@ -245,6 +339,13 @@
   flex: 1;
   position: relative;
   word-break: break-word;
+  font-family: 'Special Elite', 'Courier New', monospace;
+  letter-spacing: 0.5px;
+  text-rendering: optimizeLegibility;
+  /* Subtle ink texture */
+  text-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.8),
+    0 0 3px currentColor;
 }
 
 .log-details {
@@ -258,69 +359,181 @@
 }
 
 /* ================================
-   BLOOD DRIP EFFECT
+   BLOOD DRIP EFFECT (Enhanced)
    ================================ */
 
 .blood-drip {
   position: absolute;
-  bottom: -20px;
+  bottom: -25px;
   left: 50%;
   transform: translateX(-50%);
-  width: 4px;
-  background: linear-gradient(to bottom, #8b0000 0%, #660000 50%, transparent 100%);
+  width: 6px;
+  background: linear-gradient(
+    to bottom, 
+    #8b0000 0%, 
+    #660000 30%,
+    #4a0000 60%,
+    rgba(74, 0, 0, 0.5) 85%,
+    transparent 100%
+  );
   border-radius: 0 0 50% 50%;
-  filter: blur(0.5px);
+  filter: blur(0.8px) drop-shadow(0 2px 4px rgba(139, 0, 0, 0.8));
   pointer-events: none;
+  animation: bloodDrip 3s ease-in-out infinite;
+}
+
+.blood-drip::before {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  background: radial-gradient(circle, #8b0000 0%, #660000 50%, transparent 100%);
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: bloodDrop 3s ease-in-out infinite;
+}
+
+@keyframes bloodDrip {
+  0%, 100% {
+    height: 20px;
+    opacity: 0.9;
+  }
+  50% {
+    height: 28px;
+    opacity: 1;
+  }
+}
+
+@keyframes bloodDrop {
+  0%, 80% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(0);
+  }
+  85% {
+    opacity: 0.8;
+    transform: translateX(-50%) translateY(5px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(15px);
+  }
 }
 
 /* ================================
-   SCRATCH MARKS
+   SCRATCH MARKS (Enhanced)
    ================================ */
 
 .scratch-marks {
   position: absolute;
   top: 50%;
-  right: -30px;
+  right: -35px;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
   pointer-events: none;
+  animation: scratchAppear 0.5s ease-out;
+}
+
+@keyframes scratchAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
 }
 
 .scratch {
-  width: 25px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent 0%, #d97706 50%, transparent 100%);
+  width: 30px;
+  height: 2px;
+  background: linear-gradient(
+    90deg, 
+    transparent 0%, 
+    #d97706 20%,
+    #b45309 50%, 
+    #d97706 80%,
+    transparent 100%
+  );
   transform: rotate(-15deg);
-  opacity: 0.6;
+  opacity: 0.7;
+  box-shadow: 0 1px 3px rgba(217, 119, 6, 0.5);
+  filter: blur(0.3px);
+}
+
+.scratch:nth-child(1) {
+  width: 28px;
+  transform: rotate(-12deg);
+  animation: scratchFade 2s ease-in-out infinite;
 }
 
 .scratch:nth-child(2) {
-  width: 20px;
-  transform: rotate(-10deg);
+  width: 24px;
+  transform: rotate(-18deg);
+  animation: scratchFade 2s ease-in-out 0.3s infinite;
 }
 
 .scratch:nth-child(3) {
-  width: 22px;
-  transform: rotate(-20deg);
+  width: 26px;
+  transform: rotate(-22deg);
+  animation: scratchFade 2s ease-in-out 0.6s infinite;
+}
+
+@keyframes scratchFade {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 0.9;
+  }
 }
 
 /* ================================
-   SUCCESS GLOW
+   SUCCESS GLOW (Eldritch Enhancement)
    ================================ */
 
 .success-glow {
   position: absolute;
-  inset: -5px;
+  inset: -8px;
   background: radial-gradient(
-    circle,
-    rgba(57, 255, 20, 0.2) 0%,
+    ellipse at center,
+    rgba(57, 255, 20, 0.3) 0%,
+    rgba(57, 255, 20, 0.15) 40%,
     transparent 70%
   );
-  border-radius: 4px;
+  border-radius: 6px;
   pointer-events: none;
   z-index: -1;
+  filter: blur(8px);
+}
+
+.success-glow::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  background: radial-gradient(
+    circle,
+    rgba(57, 255, 20, 0.4) 0%,
+    transparent 60%
+  );
+  border-radius: 6px;
+  animation: eldritchPulse 3s ease-in-out infinite;
+}
+
+@keyframes eldritchPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
 }
 
 /* ================================

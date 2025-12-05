@@ -154,11 +154,13 @@ export default function App() {
   const analyze = async () => {
     if (!code.trim()) {
       setError("Please paste some code first!");
+      setConsoleLogs(prev => [...prev, createLog('No code provided for analysis', 'warning')]);
       return;
     }
 
     setLoading(true);
     setError(null);
+    setConsoleLogs(prev => [...prev, createLog('Initiating code analysis...', 'info')]);
     
     try {
       const isPython = code.includes('def ') || code.includes('import ') || 
@@ -173,15 +175,23 @@ export default function App() {
       if (res.data.analysis) {
         setAnalysis(res.data.analysis);
         setLanguage(res.data.language || 'javascript');
+        setConsoleLogs(prev => [...prev, createLog(
+          `Analysis complete! Quality score: ${res.data.analysis.qualityScore}/100`, 
+          'success'
+        )]);
       } else if (res.data.ok && res.data) {
         setAnalysis(res.data);
         setLanguage(res.data.language || 'javascript');
+        setConsoleLogs(prev => [...prev, createLog('Code analysis successful', 'success')]);
       } else {
         setAnalysis(res.data);
+        setConsoleLogs(prev => [...prev, createLog('Analysis completed with warnings', 'warning')]);
       }
     } catch (err) {
       console.error("Analysis error:", err);
-      setError("Failed to analyze code: " + (err.response?.data?.error || err.message));
+      const errorMsg = "Failed to analyze code: " + (err.response?.data?.error || err.message);
+      setError(errorMsg);
+      setConsoleLogs(prev => [...prev, createLog(errorMsg, 'error', err.stack)]);
     } finally {
       setLoading(false);
     }
@@ -190,12 +200,14 @@ export default function App() {
   const suggest = async () => {
     if (!code.trim()) {
       setError("Please paste some code first!");
+      setConsoleLogs(prev => [...prev, createLog('No code provided for suggestions', 'warning')]);
       return;
     }
 
     setLoading(true);
     setError(null);
     setOriginalCode(code);
+    setConsoleLogs(prev => [...prev, createLog('Generating refactoring suggestions...', 'info')]);
     
     try {
       const isPython = code.includes('def ') || code.includes('import ') || 
@@ -222,11 +234,20 @@ export default function App() {
       setSelectedDiff(null);
       
       if (suggs.length === 0 && !res.data.message) {
-        setError("No refactoring suggestions found. Try a longer or more complex function!");
+        const msg = "No refactoring suggestions found. Try a longer or more complex function!";
+        setError(msg);
+        setConsoleLogs(prev => [...prev, createLog(msg, 'warning')]);
+      } else if (suggs.length > 0) {
+        setConsoleLogs(prev => [...prev, createLog(
+          `Found ${suggs.length} refactoring suggestion${suggs.length > 1 ? 's' : ''}`, 
+          'success'
+        )]);
       }
     } catch (err) {
       console.error("Suggestion error:", err);
-      setError("Failed to get suggestions: " + (err.response?.data?.error || err.message));
+      const errorMsg = "Failed to get suggestions: " + (err.response?.data?.error || err.message);
+      setError(errorMsg);
+      setConsoleLogs(prev => [...prev, createLog(errorMsg, 'error')]);
     } finally {
       setLoading(false);
     }
@@ -1177,6 +1198,13 @@ function example() {
             />
           </div>
         )}
+
+        {/* Blood-Ink Console - Gothic Horror Output Panel */}
+        <BloodInkConsole 
+          logs={consoleLogs}
+          maxLogs={50}
+          autoScroll={true}
+        />
 
         <footer className="footer">
           <p>Powered by AST Analysis • Built for Kiroween 2024</p>
