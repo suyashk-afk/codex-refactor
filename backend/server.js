@@ -538,9 +538,9 @@ Explain in a friendly, conversational way:
 
 Write like you're talking to a colleague, not writing a textbook. Keep it under 3 sentences plus a small code example. Be encouraging and specific to THIS code.`;
     
-    // Direct API call to Gemini 2.5 Flash (fast and free!)
+    // Direct API call to Gemini (try stable model first)
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
         contents: [{
           parts: [{
@@ -564,11 +564,13 @@ Write like you're talking to a colleague, not writing a textbook. Keep it under 
     });
   } catch (err) {
     console.error("AI explanation error:", err.response?.data || err.message);
+    console.error("Full error:", JSON.stringify(err.response?.data, null, 2));
     // Graceful fallback to original suggestion
     res.json({ 
       ok: true, 
       explanation: smell.suggestion || "Consider refactoring this code to improve quality.",
-      fallback: true
+      fallback: true,
+      error: err.response?.data?.error?.message || err.message // Include error for debugging
     });
   }
 });
@@ -595,7 +597,7 @@ Functions: ${functionCount}
 Respond in Mr. Smith's style: professional, direct, technical. Focus on the MOST CRITICAL issue. Use terms like "exhibits", "requires", "demonstrates". Keep it under 25 words.`;
 
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
       {
         contents: [{
           parts: [{ text: prompt }]
@@ -611,10 +613,12 @@ Respond in Mr. Smith's style: professional, direct, technical. Focus on the MOST
     res.json({ ok: true, analysis });
   } catch (err) {
     console.error("Mr. Smith AI error:", err.response?.data || err.message);
+    console.error("Full error:", JSON.stringify(err.response?.data, null, 2));
     res.json({ 
       ok: true, 
       analysis: `Quality: ${qualityScore}. System requires optimization.`,
-      fallback: true
+      fallback: true,
+      error: err.response?.data?.error?.message || err.message // Include error for debugging
     });
   }
 });
