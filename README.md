@@ -4,9 +4,8 @@
 
 <div align="center">
 
-![Quality Score](https://img.shields.io/badge/Code%20Quality-85%2F100-brightgreen)
 ![Languages](https://img.shields.io/badge/Languages-JS%20%7C%20TS%20%7C%20Python-blue)
-![MCP Tools](https://img.shields.io/badge/MCP%20Tools-4-purple)
+![MCP Tools](https://img.shields.io/badge/MCP%20Tools-5-purple)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 **[🎥 Demo Video](#) | [🚀 Live Demo](#) | [📖 Full Documentation](documentation/)**
