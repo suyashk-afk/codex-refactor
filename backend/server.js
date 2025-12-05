@@ -24,11 +24,30 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const app = express();
 
 // 🔥 MUST be VERY TOP — before any routes
+// Dynamic CORS configuration for local dev and production
+const allowedOrigins = [
+  'http://localhost:5173',  // Local Vite dev server
+  'http://localhost:3000',  // Alternative local port
+  'https://codex-refactor-mkjd.vercel.app', // Production frontend
+  process.env.FRONTEND_URL, // Environment variable (backup)
+].filter(Boolean); // Remove undefined values
+
 app.use(
   cors({
-    origin: "http://localhost:5173", // allow frontend
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+      
+      // Check if origin is in allowed list or matches Vercel pattern
+      if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type"],
+    credentials: true,
   })
 );
 
