@@ -1,6 +1,12 @@
 {
+  "name": "time-machine-codex-tests",
+  "version": "1.0.0",
+  "description": "Automated tests for Time Machine Codex",
+  "scripts": {
+    "test": "node test-backend.js",
+    "test:quick": "node test-backend.js --quick"
+  },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.23.0",
-    "zod": "^4.1.13"
+    "axios": "^1.6.0"
   }
 }

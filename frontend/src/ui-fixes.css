@@ -5,10 +5,14 @@
 
 /* Fix container overflow and alignment */
 .codex-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 30px;
   overflow-x: hidden;
+  overflow-y: visible;
+  padding-top: 50px;
+  padding-bottom: 50px;
 }
 
 /* Ensure all sections have proper spacing */

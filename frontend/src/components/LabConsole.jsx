@@ -11,7 +11,8 @@ const LabConsole = memo(function LabConsole({
   complexity = 0, 
   toxicity = 0, 
   smellDensity = [],
-  repoHealth = 0,
+  codeQuality = 0,
+  mrSmithAnalysis = "Awaiting input. The system stands ready for analysis.",
   pythonEnabled = true,
   jsEnabled = true,
   onTogglePython,
@@ -78,109 +79,114 @@ const LabConsole = memo(function LabConsole({
           />
         </div>
 
-        {/* Center Panel - Oscilloscope */}
+        {/* Center Panel - Code Health Summary */}
         <div className="console-panel oscilloscope-panel">
-          <div className="panel-label">CODE SMELL DENSITY WAVEFORM</div>
-          <div className="oscilloscope">
-            <svg viewBox="0 0 400 200" className="oscilloscope-svg">
-              {/* Grid */}
-              <defs>
-                <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(57, 255, 20, 0.1)" strokeWidth="0.5"/>
-                </pattern>
-              </defs>
-              <rect width="400" height="200" fill="#000" stroke="#39ff14" strokeWidth="2"/>
-              <rect width="400" height="200" fill="url(#grid)"/>
-              
-              {/* Waveform */}
-              {smellDensity && smellDensity.length > 0 && (
-                <motion.path
-                  d={`M 0 100 ${smellDensity.map((val, i) => {
-                    const x = smellDensity.length > 1 ? (i / (smellDensity.length - 1)) * 400 : 200;
-                    const normalizedVal = Math.min(Math.max(val || 0, 0), 1);
-                    const y = 100 - (normalizedVal * 80);
-                    return `L ${x} ${y}`;
-                  }).join(' ')}`}
-                  fill="none"
-                  stroke="#39ff14"
-                  strokeWidth="2"
-                  filter="drop-shadow(0 0 5px #39ff14)"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 2, ease: 'easeInOut' }}
-                />
-              )}
-              
-              {/* Scan Line - Slowed down for performance */}
-              <motion.line
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="200"
-                stroke="rgba(57, 255, 20, 0.3)"
-                strokeWidth="1"
-                animate={{ x1: [0, 400], x2: [0, 400] }}
-                transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
-              />
-            </svg>
-            <div className="oscilloscope-label">REAL-TIME ANALYSIS</div>
+          <div className="panel-label">CODE HEALTH SUMMARY</div>
+          <div className="health-summary">
+            {smellDensity && smellDensity.length > 0 ? (
+              <>
+                <div className="health-stat">
+                  <div className="stat-label">Functions Analyzed</div>
+                  <div className="stat-value">{smellDensity.length}</div>
+                </div>
+                <div className="health-stat">
+                  <div className="stat-label">Clean Functions</div>
+                  <div className="stat-value green">
+                    {smellDensity.filter(v => v < 0.2).length}
+                  </div>
+                </div>
+                <div className="health-stat">
+                  <div className="stat-label">Needs Attention</div>
+                  <div className="stat-value orange">
+                    {smellDensity.filter(v => v >= 0.2 && v < 0.6).length}
+                  </div>
+                </div>
+                <div className="health-stat">
+                  <div className="stat-label">Critical Issues</div>
+                  <div className="stat-value red">
+                    {smellDensity.filter(v => v >= 0.6).length}
+                  </div>
+                </div>
+                <div className="health-bar">
+                  <div className="health-bar-fill" style={{
+                    width: `${Math.max(0, 100 - (smellDensity.reduce((a, b) => a + b, 0) / smellDensity.length * 100))}%`,
+                    background: smellDensity.reduce((a, b) => a + b, 0) / smellDensity.length < 0.3 
+                      ? '#39ff14' 
+                      : smellDensity.reduce((a, b) => a + b, 0) / smellDensity.length < 0.6 
+                        ? '#ffb86b' 
+                        : '#ff0040'
+                  }}></div>
+                </div>
+                <div className="health-label">
+                  Overall Health: {Math.round(Math.max(0, 100 - (smellDensity.reduce((a, b) => a + b, 0) / smellDensity.length * 100)))}%
+                </div>
+              </>
+            ) : (
+              <div className="no-data">
+                <div className="no-data-icon">📊</div>
+                <div className="no-data-text">Analyze code to see health metrics</div>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Right Panel - Controls */}
+        {/* Right Panel - Quick Stats */}
         <div className="console-panel controls-panel">
-          <div className="panel-label">ENGINE CONTROLS</div>
+          <div className="panel-label">QUICK STATS</div>
           
-          {/* Toggle Switches */}
-          <div className="toggle-switch-group">
-            <div className="toggle-switch">
-              <div className="switch-label">
-                <span className="switch-icon">🐍</span>
-                <span>PYTHON ENGINE</span>
+          <div className="quick-stats">
+            <div className="stat-card">
+              <div className="stat-icon">📈</div>
+              <div className="stat-info">
+                <div className="stat-title">Quality Score</div>
+                <div className="stat-number">{Math.round(codeQuality)}</div>
               </div>
-              <motion.div 
-                className={`switch-housing ${pythonEnabled ? 'on' : 'off'}`}
-                onClick={onTogglePython}
-                whileTap={{ scale: 0.95 }}
-              >
-                <motion.div 
-                  className="switch-lever"
-                  animate={{ x: pythonEnabled ? 30 : 0 }}
-                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                />
-                <div className="switch-indicator">
-                  <span className="indicator-off">OFF</span>
-                  <span className="indicator-on">ON</span>
-                </div>
-              </motion.div>
             </div>
 
-            <div className="toggle-switch">
-              <div className="switch-label">
-                <span className="switch-icon">⚡</span>
-                <span>JAVASCRIPT ENGINE</span>
+            <div className="stat-card">
+              <div className="stat-icon">⚠️</div>
+              <div className="stat-info">
+                <div className="stat-title">Complexity</div>
+                <div className="stat-number">{Math.round(complexity)}</div>
               </div>
-              <motion.div 
-                className={`switch-housing ${jsEnabled ? 'on' : 'off'}`}
-                onClick={onToggleJS}
-                whileTap={{ scale: 0.95 }}
-              >
-                <motion.div 
-                  className="switch-lever"
-                  animate={{ x: jsEnabled ? 30 : 0 }}
-                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                />
-                <div className="switch-indicator">
-                  <span className="indicator-off">OFF</span>
-                  <span className="indicator-on">ON</span>
+            </div>
+
+            <div className="stat-card">
+              <div className="stat-icon">🔥</div>
+              <div className="stat-info">
+                <div className="stat-title">Toxicity</div>
+                <div className="stat-number">{Math.round(toxicity)}</div>
+              </div>
+            </div>
+
+            <div className="stat-card status-card">
+              <div className="stat-icon">{isActive ? '⚡' : '💤'}</div>
+              <div className="stat-info">
+                <div className="stat-title">Status</div>
+                <div className={`stat-status ${isActive ? 'active' : 'idle'}`}>
+                  {isActive ? 'ANALYZING' : 'READY'}
                 </div>
-              </motion.div>
+              </div>
+            </div>
+
+            {/* Mr. Smith AI Analysis */}
+            <div className="agent-panel">
+              <div className="agent-header">
+                <span className="agent-icon">🕴️</span>
+                <span className="agent-title">MR. SMITH</span>
+              </div>
+              <div className="agent-message">
+                "{mrSmithAnalysis}"
+              </div>
+              <div className="agent-footer">
+                <span className="matrix-text">CODEX://ANALYSIS_COMPLETE</span>
+              </div>
             </div>
           </div>
 
           {/* Steam Gauge */}
           <div className="steam-gauge">
-            <div className="gauge-label">REPOSITORY HEALTH</div>
+            <div className="gauge-label">CODE QUALITY</div>
             <div className="gauge-container">
               <svg viewBox="0 0 120 120" className="gauge-svg">
                 {/* Gauge Background */}
@@ -192,24 +198,24 @@ const LabConsole = memo(function LabConsole({
                   cy="60"
                   r="45"
                   fill="none"
-                  stroke={repoHealth > 70 ? '#39ff14' : repoHealth > 40 ? '#ffb86b' : '#ff0040'}
+                  stroke={codeQuality > 70 ? '#39ff14' : codeQuality > 40 ? '#ffb86b' : '#ff0040'}
                   strokeWidth="8"
                   strokeDasharray={283}
-                  strokeDashoffset={283 - (repoHealth / 100) * 283}
+                  strokeDashoffset={283 - (codeQuality / 100) * 283}
                   strokeLinecap="round"
                   transform="rotate(-90 60 60)"
                   initial={{ strokeDashoffset: 283 }}
-                  animate={{ strokeDashoffset: 283 - (repoHealth / 100) * 283 }}
+                  animate={{ strokeDashoffset: 283 - (codeQuality / 100) * 283 }}
                   transition={{ duration: 1.5, ease: 'easeOut' }}
                   filter="drop-shadow(0 0 5px currentColor)"
                 />
                 
                 {/* Center Value */}
                 <text x="60" y="65" fill="#e4e4e4" fontSize="24" fontWeight="bold" textAnchor="middle">
-                  {Math.round(repoHealth)}
+                  {Math.round(codeQuality)}
                 </text>
                 <text x="60" y="80" fill="#8b6321" fontSize="10" textAnchor="middle">
-                  HEALTH
+                  QUALITY
                 </text>
               </svg>
               

@@ -1,0 +1,139 @@
+/* ================================
+   🎃 HORROR FONTS
+   Spooky typography for Halloween theme
+   ================================ */
+
+/* Main title - Creepy dripping effect */
+.codex-title {
+  font-family: 'Nosifer', cursive !important;
+  letter-spacing: 3px !important;
+  text-shadow: 
+    0 0 10px rgba(139, 0, 0, 0.8),
+    0 0 20px rgba(139, 0, 0, 0.6),
+    0 0 30px rgba(139, 0, 0, 0.4),
+    2px 2px 0 #000,
+    -2px -2px 0 #000,
+    2px -2px 0 #000,
+    -2px 2px 0 #000 !important;
+}
+
+/* Welcome title */
+.welcome-title {
+  font-family: 'Creepster', cursive !important;
+  letter-spacing: 4px !important;
+  text-shadow: 
+    0 0 20px rgba(57, 255, 20, 0.8),
+    0 0 40px rgba(57, 255, 20, 0.4) !important;
+}
+
+/* Section headers - Gothic style */
+.results-header,
+.suggestions-header,
+h2 {
+  font-family: 'Eater', cursive !important;
+  letter-spacing: 2px !important;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.8),
+    0 0 10px rgba(139, 0, 0, 0.5) !important;
+}
+
+/* Subtitles and descriptions */
+.codex-subtitle,
+.welcome-subtitle {
+  font-family: 'Special Elite', cursive !important;
+  letter-spacing: 1px !important;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Tab buttons and UI elements */
+.tab-btn,
+.action-btn,
+.analyze-btn,
+.suggest-btn {
+  font-family: 'Butcherman', cursive !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+}
+
+/* Code editor - Keep monospace but make it spooky */
+.code-editor,
+pre,
+code {
+  font-family: 'Courier Prime', monospace !important;
+  text-shadow: 0 0 2px rgba(57, 255, 20, 0.3) !important;
+}
+
+/* Issue cards and warnings */
+.issue-title,
+.severity-badge {
+  font-family: 'Special Elite', cursive !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* Footer */
+.footer {
+  font-family: 'Special Elite', cursive !important;
+  letter-spacing: 2px !important;
+  text-shadow: 0 0 5px rgba(139, 0, 0, 0.5) !important;
+}
+
+/* Language badge */
+.language-badge {
+  font-family: 'Butcherman', cursive !important;
+  letter-spacing: 1px !important;
+}
+
+/* Timeline and history elements */
+.timeline-point h4,
+.commit-card h3 {
+  font-family: 'Eater', cursive !important;
+  letter-spacing: 1px !important;
+}
+
+/* Blood-drip effect on main title */
+.title-accent {
+  position: relative;
+  display: inline-block;
+}
+
+.title-accent::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 20%;
+  width: 60%;
+  height: 20px;
+  background: linear-gradient(180deg, 
+    rgba(139, 0, 0, 0.8) 0%, 
+    rgba(139, 0, 0, 0.4) 50%, 
+    transparent 100%);
+  filter: blur(2px);
+  border-radius: 50%;
+  animation: bloodDrip 3s ease-in-out infinite;
+}
+
+@keyframes bloodDrip {
+  0%, 100% {
+    transform: translateY(0) scaleY(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(5px) scaleY(1.2);
+    opacity: 0.8;
+  }
+}
+
+/* Glitch effect removed for performance */
+
+/* Simplified shadow - static for performance */
+.codex-title {
+  /* Animation removed for performance */
+}
+
+/* Simplified button hover - performance optimized */
+.action-btn:hover,
+.analyze-btn:hover,
+.suggest-btn:hover {
+  transform: translateY(-1px);
+  transition: transform 0.2s ease !important;
+}

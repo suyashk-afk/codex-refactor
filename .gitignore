@@ -33,3 +33,6 @@ Thumbs.db
 # Temporary files
 *.tmp
 .cache/
+
+# Development/testing files (not for judges)
+temp/

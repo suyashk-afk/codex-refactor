@@ -606,3 +606,296 @@ textarea:focus-visible {
   color: #999;
   font-size: 1.1rem;
 }
+
+
+/* ================================
+   🎨 HERO SECTION IMPROVEMENTS
+   ================================ */
+
+.hero-section {
+  position: relative;
+  padding: 60px 0 !important;
+  margin-bottom: 60px !important;
+  background: none !important;
+  overflow: visible !important;
+}
+
+/* Frankenstein's Monster lurking behind hero */
+.hero-section::before {
+  content: '🧟';
+  position: absolute;
+  right: -80px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20rem;
+  opacity: 0.08;
+  filter: blur(2px) grayscale(100%);
+  z-index: -1;
+  animation: monsterLurk 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes monsterLurk {
+  0%, 100% {
+    transform: translateY(-50%) scale(1);
+    opacity: 0.08;
+  }
+  50% {
+    transform: translateY(-50%) scale(1.05);
+    opacity: 0.12;
+  }
+}
+
+/* Add lightning bolt on left side */
+.hero-section::after {
+  content: '⚡';
+  position: absolute;
+  left: -60px;
+  top: 20%;
+  font-size: 8rem;
+  opacity: 0;
+  filter: blur(1px);
+  z-index: -1;
+  animation: lightningStrike 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes lightningStrike {
+  0%, 90%, 100% {
+    opacity: 0;
+  }
+  92%, 94%, 96% {
+    opacity: 0.3;
+  }
+  93%, 95% {
+    opacity: 0;
+  }
+}
+
+.hero-icon {
+  font-size: 5rem !important;
+  margin-bottom: 30px !important;
+  display: inline-block;
+  position: relative;
+  z-index: 10;
+}
+
+.codex-title {
+  position: relative;
+  z-index: 10;
+  margin: 30px 0 !important;
+}
+
+.title-text {
+  font-size: 3.5rem !important;
+  font-weight: 900 !important;
+  background: linear-gradient(90deg, #39ff14 0%, #42ff8a 50%, #39ff14 100%) !important;
+  background-size: 200% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  display: block !important;
+  text-shadow: none !important;
+  filter: drop-shadow(0 0 30px rgba(57, 255, 20, 0.6)) !important;
+}
+
+.title-accent {
+  font-size: 4rem !important;
+  font-weight: 900 !important;
+  background: linear-gradient(90deg, #ff0040 0%, #ff6b6b 50%, #ff0040 100%) !important;
+  background-size: 200% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  display: block !important;
+  margin-top: 15px !important;
+  text-shadow: none !important;
+  filter: drop-shadow(0 0 30px rgba(255, 0, 64, 0.6)) !important;
+}
+
+.codex-subtitle {
+  font-size: 1.2rem !important;
+  color: #d4a574 !important;
+  max-width: 700px !important;
+  margin: 25px auto 40px !important;
+  line-height: 1.6 !important;
+  font-weight: 500 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+.language-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: rgba(124, 58, 237, 0.15) !important;
+  border: 2px solid rgba(124, 58, 237, 0.4) !important;
+  padding: 12px 30px !important;
+  border-radius: 50px !important;
+  margin-top: 30px !important;
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.badge-icon {
+  font-size: 1.8rem !important;
+}
+
+.badge-text {
+  color: #06b6d4 !important;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+  letter-spacing: 1.5px !important;
+  text-shadow: 0 0 10px rgba(6, 182, 212, 0.5) !important;
+}
+
+/* Remove conflicting animations */
+.hero-icon::after {
+  display: none !important;
+}
+
+
+/* Add glow to beaker emoji, remove square background */
+.hero-icon {
+  filter: drop-shadow(0 0 20px rgba(57, 255, 20, 0.6)) 
+          drop-shadow(0 0 40px rgba(57, 255, 20, 0.4)) !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+
+/* ================================
+   🧟 FRANKENSTEIN'S MONSTER
+   Lurking in the shadows
+   ================================ */
+
+/* Add monster silhouette to results with bad scores */
+.results-container::before,
+.suggestions-container::before {
+  content: '🧟';
+  position: fixed;
+  right: -100px;
+  bottom: 50px;
+  font-size: 15rem;
+  opacity: 0;
+  filter: blur(3px) grayscale(100%);
+  transition: all 1s ease;
+  pointer-events: none;
+  z-index: 1;
+  animation: monsterBreathe 4s ease-in-out infinite;
+}
+
+/* Show monster when there are issues */
+.results-container[data-has-issues="true"]::before,
+.suggestions-container:not(:empty)::before {
+  right: -50px;
+  opacity: 0.15;
+}
+
+@keyframes monsterBreathe {
+  0%, 100% {
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    transform: scale(1.02) translateY(-10px);
+  }
+}
+
+/* Add creepy shadow hands reaching from sides */
+body::after {
+  content: '';
+  position: fixed;
+  left: 0;
+  top: 50%;
+  width: 150px;
+  height: 200px;
+  background: radial-gradient(ellipse at left, rgba(0, 0, 0, 0.8) 0%, transparent 70%);
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 1s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Show shadows when analyzing */
+body.analyzing::after {
+  opacity: 0.3;
+  animation: reachingHand 3s ease-in-out infinite;
+}
+
+@keyframes reachingHand {
+  0%, 100% {
+    transform: translateY(-50%) translateX(-20px);
+  }
+  50% {
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+/* Add stitches to containers with issues */
+.smell-card::before,
+.issue-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10px;
+  right: 10px;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 8px,
+    rgba(139, 0, 0, 0.3) 8px,
+    rgba(139, 0, 0, 0.3) 10px
+  );
+  pointer-events: none;
+}
+
+/* Add bolts to high-severity issues */
+.severity-badge.high::after {
+  content: '⚡';
+  margin-left: 5px;
+  animation: boltFlicker 2s ease-in-out infinite;
+}
+
+@keyframes boltFlicker {
+  0%, 90%, 100% {
+    opacity: 1;
+  }
+  93%, 97% {
+    opacity: 0.3;
+  }
+}
+
+/* Creepy green glow on perfect code */
+.perfect-code {
+  position: relative;
+  overflow: hidden;
+}
+
+.perfect-code::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(57, 255, 20, 0.1) 0%, transparent 70%);
+  animation: rotateGlow 10s linear infinite;
+}
+
+@keyframes rotateGlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ================================
+   💀 SKULL DECORATIONS
+   All old emoji skulls removed - replaced with high-quality SVG SkullGarland component
+   ================================ */

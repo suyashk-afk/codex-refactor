@@ -1,0 +1,8 @@
+{
+  "name": "Technical Debt Tracker",
+  "description": "Calculate technical debt in hours when committing changes",
+  "trigger": "manual",
+  "action": "sendMessage",
+  "message": "Analyze all modified files and calculate total technical debt in hours using severity-weighted remediation time (Critical: 2h, High: 1h, Medium: 30m, Low: 15m). Show before/after comparison.",
+  "enabled": true
+}

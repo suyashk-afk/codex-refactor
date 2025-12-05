@@ -1,0 +1,9 @@
+{
+  "name": "Complexity Guard",
+  "description": "Warn when saving files with functions that have cyclomatic complexity > 10 (McCabe threshold)",
+  "trigger": "onFileSave",
+  "action": "sendMessage",
+  "message": "Check if any functions in this file have cyclomatic complexity > 10. If yes, warn me and suggest refactoring using extract function pattern.",
+  "filePattern": "**/*.{js,jsx,ts,tsx,py}",
+  "enabled": true
+}

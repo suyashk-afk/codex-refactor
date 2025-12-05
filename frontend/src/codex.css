@@ -2208,6 +2208,8 @@ body::after {
   border-radius: 8px;
   padding: 20px;
   transition: all 0.3s;
+  min-height: 80px;
+  width: 100%;
 }
 
 .file-item:hover {
@@ -2226,6 +2228,8 @@ body::after {
 
 .file-info {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .file-path {
@@ -2234,6 +2238,8 @@ body::after {
   font-weight: 600;
   margin-bottom: 8px;
   font-size: 0.95rem;
+  word-break: break-all;
+  overflow-wrap: break-word;
 }
 
 .file-meta {

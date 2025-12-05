@@ -1,0 +1,59 @@
+/* ================================
+   👁️ CREEPY CURSOR FOLLOWER
+   Spooky emoji that follows the mouse
+   ================================ */
+
+.cursor-follower {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cursor-follower.visible {
+  opacity: 0.8;
+}
+
+.follower-emoji {
+  font-size: 32px;
+  display: block;
+  filter: 
+    drop-shadow(0 0 10px rgba(139, 0, 0, 0.8))
+    drop-shadow(0 0 20px rgba(139, 0, 0, 0.4));
+  animation: emojiFloat 2s ease-in-out infinite;
+}
+
+/* Simplified animation - less CPU intensive */
+.follower-emoji {
+  filter: drop-shadow(0 0 10px rgba(139, 0, 0, 0.8));
+  transition: transform 0.3s ease;
+}
+
+.cursor-follower.visible .follower-emoji {
+  animation: emojiFloat 3s ease-in-out infinite;
+}
+
+@keyframes emojiFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* Hide on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .cursor-follower {
+    display: none;
+  }
+}
+
+/* Smaller on mobile */
+@media (max-width: 768px) {
+  .follower-emoji {
+    font-size: 24px;
+  }
+}

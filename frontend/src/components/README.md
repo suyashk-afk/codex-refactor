@@ -169,4 +169,4 @@ Edit SVG paths in `LiveWires.jsx`:
 
 ---
 
-**Built for Kiroween 2024 Hackathon - Frankenstein Category** 🧟⚡
+**Frankenstein Category** 🧟⚡

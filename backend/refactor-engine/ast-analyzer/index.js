@@ -54,22 +54,63 @@ function countNestedCallbacks(functionPath) {
 }
 
 /**
- * Count branches (cyclomatic complexity indicator)
+ * Calculate TRUE Cyclomatic Complexity (McCabe)
+ * Formula: M = E - N + 2P
+ * Simplified: M = decision_points + 1
+ * 
+ * Decision points:
+ * - if, else if
+ * - for, while, do-while
+ * - case in switch
+ * - catch
+ * - &&, || in conditions
+ * - ternary operator (? :)
+ */
+function calculateCyclomaticComplexity(functionPath) {
+  let complexity = 1; // Start at 1 (base path)
+  
+  functionPath.traverse({
+    // Conditional statements
+    IfStatement() { complexity++; },
+    
+    // Loops
+    ForStatement() { complexity++; },
+    ForInStatement() { complexity++; },
+    ForOfStatement() { complexity++; },
+    WhileStatement() { complexity++; },
+    DoWhileStatement() { complexity++; },
+    
+    // Switch cases (each case adds a path)
+    SwitchCase(path) {
+      // Don't count default case as it doesn't add complexity
+      if (path.node.test !== null) {
+        complexity++;
+      }
+    },
+    
+    // Ternary operator
+    ConditionalExpression() { complexity++; },
+    
+    // Logical operators (short-circuit evaluation creates branches)
+    LogicalExpression(path) {
+      // Only count && and || at decision points
+      if (path.node.operator === '&&' || path.node.operator === '||') {
+        complexity++;
+      }
+    },
+    
+    // Exception handling
+    CatchClause() { complexity++; }
+  });
+  
+  return complexity;
+}
+
+/**
+ * Count branches (for backward compatibility)
  */
 function countBranches(functionPath) {
-  let branches = 0;
-  functionPath.traverse({
-    IfStatement() { branches++; },
-    ForStatement() { branches++; },
-    ForInStatement() { branches++; },
-    ForOfStatement() { branches++; },
-    WhileStatement() { branches++; },
-    DoWhileStatement() { branches++; },
-    SwitchStatement() { branches++; },
-    ConditionalExpression() { branches++; },
-    LogicalExpression() { branches++; } // NEW: count && and ||
-  });
-  return branches;
+  return calculateCyclomaticComplexity(functionPath) - 1; // Remove base path for branch count
 }
 
 /**
@@ -101,11 +142,20 @@ function detectCodeSmells(functionPath, functionName, length) {
 
   // High cyclomatic complexity (>10 branches)
   const branches = countBranches(functionPath);
-  if (branches > 10) {
+  // High cyclomatic complexity (McCabe threshold: >10 is complex, >20 is untestable)
+  const complexity = calculateCyclomaticComplexity(functionPath);
+  if (complexity > 20) {
+    smells.push({
+      type: 'high_complexity',
+      severity: 'critical',
+      message: `Function '${functionName}' has cyclomatic complexity of ${complexity}. This is extremely complex and hard to test.`,
+      suggestion: 'Urgently refactor - split into multiple functions with single responsibilities'
+    });
+  } else if (complexity > 10) {
     smells.push({
       type: 'high_complexity',
       severity: 'high',
-      message: `Function '${functionName}' has ${branches} decision points. This is very complex.`,
+      message: `Function '${functionName}' has cyclomatic complexity of ${complexity}. This is moderately complex.`,
       suggestion: 'Simplify logic or use polymorphism/strategy pattern'
     });
   }
@@ -121,18 +171,45 @@ function detectCodeSmells(functionPath, functionName, length) {
     });
   }
 
-  // NEW: Detect magic numbers
+  // Detect magic numbers (IMPROVED: less false positives)
   let magicNumbers = [];
   functionPath.traverse({
     NumericLiteral(path) {
       const value = path.node.value;
-      // Ignore common values like 0, 1, -1, 100
-      if (![0, 1, -1, 100].includes(value) && !path.findParent(p => p.isVariableDeclarator())) {
+      
+      // Ignore common acceptable values
+      const acceptableValues = [
+        0, 1, -1, 2, 10, 100, 1000,  // Common constants
+        24, 60, 365,                  // Time-related
+        256, 512, 1024,               // Buffer/memory sizes
+        8, 16, 32, 64, 128           // Bit-related
+      ];
+      
+      if (acceptableValues.includes(value)) return;
+      
+      // Ignore if in variable declaration (const MAX = 100)
+      if (path.findParent(p => p.isVariableDeclarator())) return;
+      
+      // Ignore if in array index (arr[0], arr[1])
+      if (path.findParent(p => p.isMemberExpression())) return;
+      
+      // Ignore if in return statement with single number
+      const parent = path.parent;
+      if (parent.type === 'ReturnStatement' && parent.argument === path.node) return;
+      
+      // Only flag if used in calculations or comparisons
+      if (path.findParent(p => 
+        p.isBinaryExpression() || 
+        p.isLogicalExpression() ||
+        p.isConditionalExpression()
+      )) {
         magicNumbers.push(value);
       }
     }
   });
-  if (magicNumbers.length > 0) {
+  
+  // Only report if there are MULTIPLE magic numbers (not just one)
+  if (magicNumbers.length > 2) {
     smells.push({
       type: 'magic_numbers',
       severity: 'medium',
@@ -172,6 +249,86 @@ function detectCodeSmells(functionPath, functionName, length) {
 }
 
 /**
+ * Calculate Code Toxicity Score (0-100)
+ * Based on research from SonarQube, Code Climate, and academic papers
+ * 
+ * Toxicity factors:
+ * 1. Severity-weighted smell density
+ * 2. Complexity burden
+ * 3. Maintainability index
+ * 4. Technical debt ratio
+ * 
+ * 0-20: Clean code
+ * 21-40: Moderate toxicity
+ * 41-60: High toxicity
+ * 61-80: Very toxic
+ * 81-100: Extremely toxic (unmaintainable)
+ */
+function calculateToxicity(result) {
+  if (!result.functions || result.functions.length === 0) return 0;
+  
+  // Severity weights (based on remediation effort)
+  const severityWeights = {
+    critical: 10,
+    high: 5,
+    medium: 2,
+    low: 1
+  };
+  
+  // Smell type impact multipliers (some smells are worse than others)
+  const smellImpact = {
+    high_complexity: 1.5,      // Very hard to fix
+    deep_nesting: 1.3,         // Requires restructuring
+    long_function: 1.2,        // Time-consuming to split
+    callback_hell: 1.4,        // Async refactoring is hard
+    magic_numbers: 0.8,        // Easy to fix
+    missing_error_handling: 1.1
+  };
+  
+  let weightedSmellScore = 0;
+  let totalLines = 0;
+  let totalComplexity = 0;
+  
+  // Calculate weighted smell score
+  result.functions.forEach(fn => {
+    totalLines += fn.length || 0;
+    totalComplexity += fn.complexity || 1;
+    
+    fn.smells.forEach(smell => {
+      const severityWeight = severityWeights[smell.severity] || 1;
+      const impactMultiplier = smellImpact[smell.type] || 1.0;
+      weightedSmellScore += severityWeight * impactMultiplier;
+    });
+  });
+  
+  // 1. Smell Density (weighted smells per 100 lines of code)
+  const smellDensity = totalLines > 0 
+    ? (weightedSmellScore / totalLines) * 100 
+    : 0;
+  
+  // 2. Complexity Burden (average complexity above threshold)
+  const avgComplexity = totalComplexity / result.functions.length;
+  const complexityBurden = Math.max(0, (avgComplexity - 5) * 5); // 5 is acceptable threshold
+  
+  // 3. Maintainability Index (inverse of quality score)
+  const maintainabilityPenalty = (100 - result.qualityScore) * 0.3;
+  
+  // 4. Technical Debt Ratio (functions with smells / total functions)
+  const functionsWithSmells = result.functions.filter(fn => fn.smells.length > 0).length;
+  const debtRatio = (functionsWithSmells / result.functions.length) * 30;
+  
+  // Combine factors (weighted average)
+  const toxicity = Math.min(100, Math.round(
+    smellDensity * 0.35 +           // 35% weight on smell density
+    complexityBurden * 0.25 +       // 25% weight on complexity
+    maintainabilityPenalty * 0.25 + // 25% weight on maintainability
+    debtRatio * 0.15                // 15% weight on debt ratio
+  ));
+  
+  return toxicity;
+}
+
+/**
  * NEW: Calculate overall code quality score (0-100)
  */
 function calculateQualityScore(analysis) {
@@ -182,26 +339,42 @@ function calculateQualityScore(analysis) {
 
   let totalScore = 0;
   const penalties = {
-    long_function: 8,
-    deep_nesting: 10,
-    high_complexity: 12,
-    callback_hell: 7,
-    magic_numbers: 5,
-    too_many_parameters: 6,
-    missing_error_handling: 8
+    long_function: 15,      // Increased
+    deep_nesting: 20,       // Increased significantly
+    high_complexity: 25,    // Increased significantly
+    callback_hell: 12,      // Increased
+    magic_numbers: 8,       // Increased
+    too_many_parameters: 10, // Increased
+    missing_error_handling: 10 // Increased
   };
 
   // Calculate score per function, then average
   analysis.functions.forEach(fn => {
     let fnScore = 100;
     
+    // Apply penalties for each smell
     (fn.smells || []).forEach(smell => {
       fnScore -= penalties[smell.type] || 5;
     });
     
-    // Bonus for concise functions
-    if ((fn.length || 0) < 15) {
-      fnScore += 5;
+    // Additional penalties based on metrics
+    const nesting = fn.nesting || 0;
+    const length = fn.length || 0;
+    const branches = fn.branchCount || 0;
+    
+    // Extra penalty for extreme nesting (beyond what smell detection catches)
+    if (nesting > 5) {
+      fnScore -= (nesting - 5) * 5; // -5 per level above 5
+    }
+    
+    // Extra penalty for very long functions
+    if (length > 30) {
+      fnScore -= (Math.floor((length - 30) / 10)) * 5; // -5 per 10 lines above 30
+    }
+    
+    // Extra penalty for high branch count
+    if (branches > 15) {
+      fnScore -= (branches - 15) * 3; // -3 per branch above 15
     }
     
     totalScore += Math.max(0, Math.min(100, fnScore));
@@ -260,7 +433,8 @@ function analyzeCode(code, filename = 'file.js') {
 
       const nesting = computeNestingDepth(path);
       const callbacks = countNestedCallbacks(path);
-      const branches = countBranches(path);
+      const complexity = calculateCyclomaticComplexity(path);
+      const branches = complexity - 1; // Branch count for backward compatibility
       const smells = detectCodeSmells(path, name, len);
 
       result.functions.push({
@@ -270,6 +444,7 @@ function analyzeCode(code, filename = 'file.js') {
         length: len,
         nesting,
         nestedCallbacks: callbacks,
+        complexity, // TRUE cyclomatic complexity
         branchCount: branches,
         smells,
         isAsync: path.node.async || false
@@ -293,7 +468,8 @@ function analyzeCode(code, filename = 'file.js') {
 
         const nesting = computeNestingDepth(init);
         const callbacks = countNestedCallbacks(init);
-        const branches = countBranches(init);
+        const complexity = calculateCyclomaticComplexity(init);
+        const branches = complexity - 1; // Branch count for backward compatibility
         const smells = detectCodeSmells(init, name, len);
 
         result.functions.push({
@@ -303,6 +479,7 @@ function analyzeCode(code, filename = 'file.js') {
           length: len,
           nesting,
           nestedCallbacks: callbacks,
+          complexity, // TRUE cyclomatic complexity
           branchCount: branches,
           smells,
           isAsync: init.node.async || false
@@ -337,12 +514,22 @@ function analyzeCode(code, filename = 'file.js') {
   // Calculate overall quality score
   result.qualityScore = calculateQualityScore(result);
 
+  // Calculate average cyclomatic complexity
+  result.avgComplexity = result.functions.length > 0
+    ? Math.round((result.functions.reduce((sum, fn) => sum + (fn.complexity || 1), 0) / result.functions.length) * 10) / 10
+    : 0;
+
+  // Calculate REAL code toxicity (scientific model)
+  result.toxicityScore = calculateToxicity(result);
+
   // Add summary
   result.summary = {
     totalFunctions: result.functions.length,
     averageLength: result.functions.length > 0 
       ? Math.round(result.functions.reduce((sum, fn) => sum + (fn.length || 0), 0) / result.functions.length)
       : 0,
+    averageComplexity: result.avgComplexity,
+    toxicity: result.toxicityScore,
     healthStatus: result.qualityScore > 80 ? 'healthy' : result.qualityScore > 50 ? 'needs_improvement' : 'critical'
   };
 

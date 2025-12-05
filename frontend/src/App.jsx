@@ -3,6 +3,7 @@ import axios from 'axios';
 import './codex.css';
 import './ui-fixes.css';
 import './ui-polish.css';
+import './horror-fonts.css';
 import { diffLines } from "diff";
 import LiveWires from './components/LiveWires';
 import ThreeBackground from './components/ThreeBackground';
@@ -11,6 +12,9 @@ import SurgicalToolkit from './components/SurgicalToolkit';
 import BloodInkConsole, { createLog } from './components/BloodInkConsole';
 import OccultLoader from './components/OccultLoader';
 import EyeOfRepository from './components/EyeOfRepository';
+import CheshireCat from './components/CheshireCat';
+import CursorFollower from './components/CursorFollower';
+import InitScreen from './components/InitScreen';
 
 // Lazy load CobwebGraph for better performance
 const CobwebGraph = lazy(() => import('./components/CobwebGraph'));
@@ -123,10 +127,12 @@ export default function App() {
   const [analysis, setAnalysis] = useState(null);
   const [language, setLanguage] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
+  const [mrSmithAnalysis, setMrSmithAnalysis] = useState("Awaiting input. The system stands ready for analysis.");
   const [selectedDiff, setSelectedDiff] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
+  const [showInitScreen, setShowInitScreen] = useState(true);
   
   // AI Assistant state
   const [aiExplanations, setAiExplanations] = useState({});
@@ -190,7 +196,10 @@ export default function App() {
       clearInterval(progressInterval);
       setLoaderProgress(100);
       
+      let analysisData = null;
+      
       if (res.data.analysis) {
+        analysisData = res.data.analysis;
         setAnalysis(res.data.analysis);
         setLanguage(res.data.language || 'javascript');
         setLoaderStatus('success');
@@ -199,14 +208,36 @@ export default function App() {
           'success'
         )]);
       } else if (res.data.ok && res.data) {
+        analysisData = res.data;
         setAnalysis(res.data);
         setLanguage(res.data.language || 'javascript');
         setLoaderStatus('success');
         setConsoleLogs(prev => [...prev, createLog('Code analysis successful', 'success')]);
       } else {
+        analysisData = res.data;
         setAnalysis(res.data);
         setLoaderStatus('success');
         setConsoleLogs(prev => [...prev, createLog('Analysis completed with warnings', 'warning')]);
+      }
+      
+      // Get Mr. Smith AI analysis for all successful analyses
+      if (analysisData) {
+        try {
+          const smithRes = await axios.post("http://localhost:4000/mr-smith", {
+            qualityScore: analysisData.qualityScore || 0,
+            complexity: analysisData.avgComplexity || 0,
+            toxicity: analysisData.totalSmells || 0,
+            totalSmells: analysisData.totalSmells || 0,
+            functionCount: analysisData.functions?.length || 0
+          });
+          if (smithRes.data.ok) {
+            setMrSmithAnalysis(smithRes.data.analysis);
+            setConsoleLogs(prev => [...prev, createLog('Mr. Smith analysis complete', 'success')]);
+          }
+        } catch (err) {
+          console.error("Mr. Smith analysis failed:", err);
+          setConsoleLogs(prev => [...prev, createLog('Mr. Smith analysis unavailable', 'warning')]);
+        }
       }
       
       setTimeout(() => setLoaderStatus('idle'), 1000);
@@ -393,8 +424,19 @@ export default function App() {
                       analysis !== null || suggestions.length > 0 || 
                       repoAnalysis !== null || historyData !== null;
 
+  // Show init screen first
+  if (showInitScreen) {
+    return <InitScreen onComplete={() => setShowInitScreen(false)} />;
+  }
+
   return (
     <>
+      {/* Creepy Cursor Follower */}
+      <CursorFollower />
+
+      {/* Creepy Cheshire Cat Overlay */}
+      <CheshireCat />
+
       {/* Occult Summoning Loader - Magical Ritual Circle */}
       <OccultLoader
         isActive={loaderStatus !== 'idle'}
@@ -469,20 +511,20 @@ export default function App() {
         {showWelcome && (
           <div className="welcome-overlay">
             <div className="welcome-content">
-              <h1 className="welcome-title">⚗️ Refactor Codex</h1>
-              <p className="welcome-subtitle">Initializing AST Engine...</p>
+              <h1 className="welcome-title">🕰️ Time Machine Codex</h1>
+              <p className="welcome-subtitle">Initializing temporal analysis...</p>
             </div>
           </div>
         )}
 
         <div className="hero-section">
-          <div className="hero-icon">⚗️</div>
+          <div className="hero-icon">🕰️</div>
           <h1 className="codex-title">
-            <span className="title-text">The Refactor</span>
+            <span className="title-text">Time Machine</span>
             <span className="title-accent">Codex</span>
           </h1>
           <p className="codex-subtitle">
-            Decode the hidden architecture within your code
+            Travel through Git history • Analyze code evolution • Refactor with AI
           </p>
           {language && (
             <div className="language-badge">
@@ -498,20 +540,34 @@ export default function App() {
         <LabConsole 
           complexity={
             analysis?.avgComplexity 
-              ? Math.min(analysis.avgComplexity * 10, 100) // Scale complexity to 0-100
+              ? (() => {
+                  const c = analysis.avgComplexity;
+                  // Calibrated McCabe scale:
+                  // 1-4: 0-20% (simple)
+                  // 5-7: 20-40% (moderate)
+                  // 8-10: 40-60% (complex)
+                  // 11-20: 60-90% (very complex)
+                  // 21+: 90-100% (extremely complex)
+                  if (c <= 4) return (c / 4) * 20;
+                  if (c <= 7) return 20 + ((c - 4) / 3) * 20;
+                  if (c <= 10) return 40 + ((c - 7) / 3) * 20;
+                  if (c <= 20) return 60 + ((c - 10) / 10) * 30;
+                  return Math.min(90 + ((c - 20) / 10) * 10, 100);
+                })()
               : 0
           }
           toxicity={
-            analysis?.totalSmells 
-              ? Math.min((analysis.totalSmells / (analysis.totalFunctions || 1)) * 100, 100) // Smells per function ratio
+            analysis?.toxicityScore !== undefined
+              ? analysis.toxicityScore // Real scientific toxicity score
               : 0
           }
           smellDensity={
             analysis?.functions?.length > 0
-              ? analysis.functions.map(f => Math.min((f.issues?.length || 0) / 10, 1)) // Normalize to 0-1
+              ? analysis.functions.map(f => Math.min((f.smells?.length || 0) / 10, 1)) // Normalize to 0-1
               : repoAnalysis?.worstFiles?.map(f => (100 - f.score) / 100) || []
           }
-          repoHealth={analysis?.qualityScore || repoAnalysis?.summary?.averageQualityScore || 0}
+          codeQuality={analysis?.qualityScore || repoAnalysis?.summary?.averageQualityScore || 0}
+          mrSmithAnalysis={mrSmithAnalysis}
           pythonEnabled={language === 'python'}
           jsEnabled={language === 'javascript' || !language}
           onTogglePython={() => setLanguage(language === 'python' ? null : 'python')}
@@ -567,6 +623,10 @@ function example() {
 }"
               value={code}
               onChange={(e) => setCode(e.target.value)}
+              spellCheck="false"
+              autoComplete="off"
+              autoCorrect="off"
+              autoCapitalize="off"
             />
           </div>
         ) : activeTab === 'repo' ? (
@@ -1271,7 +1331,7 @@ function example() {
         />
 
         <footer className="footer">
-          <p>Powered by AST Analysis • Built for Kiroween 2024</p>
+          <p>🕰️ Time Machine Codex • Git History Analysis • AST-Powered Refactoring</p>
         </footer>
       </div>
     </>

@@ -1,7 +1,17 @@
 // Quick test to verify Gemini API works
+require('dotenv').config();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const genAI = new GoogleGenerativeAI("AIzaSyCZ3G46vcvXAUN9ZVHJwGc8K7Uc_TNSzc0");
+const API_KEY = process.env.GEMINI_API_KEY;
+
+if (!API_KEY) {
+  console.error("❌ ERROR: GEMINI_API_KEY not found in .env file");
+  console.log("Please add your API key to backend/.env file:");
+  console.log("GEMINI_API_KEY=your_key_here");
+  process.exit(1);
+}
+
+const genAI = new GoogleGenerativeAI(API_KEY);
 
 async function listModels() {
   try {

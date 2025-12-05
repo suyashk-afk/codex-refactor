@@ -1,0 +1,79 @@
+/* ================================
+   😸 CHESHIRE CAT OVERLAY
+   Creepy appearing/disappearing effect
+   ================================ */
+
+.cheshire-cat {
+  position: fixed;
+  top: 50%;
+  right: 5%;
+  transform: translateY(-50%);
+  width: 200px;
+  height: 200px;
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 2s ease-in-out;
+}
+
+.cheshire-cat.visible {
+  opacity: 0.9;
+  animation: cheshireFade 5s ease-in-out;
+}
+
+.cheshire-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: 
+    drop-shadow(0 0 20px rgba(139, 0, 0, 0.8))
+    drop-shadow(0 0 40px rgba(139, 0, 0, 0.4))
+    brightness(0.9)
+    contrast(1.2);
+  animation: cheshireGlow 3s ease-in-out infinite;
+}
+
+/* Fade in and out animation */
+@keyframes cheshireFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.8);
+  }
+  20% {
+    opacity: 0.95;
+    transform: translateY(-50%) scale(1);
+  }
+  80% {
+    opacity: 0.95;
+    transform: translateY(-50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.8);
+  }
+}
+
+/* Simplified glow - less CPU intensive */
+@keyframes cheshireGlow {
+  0%, 100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Responsive - hide on smaller screens */
+@media (max-width: 1024px) {
+  .cheshire-cat {
+    width: 150px;
+    height: 150px;
+    right: 2%;
+  }
+}
+
+@media (max-width: 768px) {
+  .cheshire-cat {
+    display: none;
+  }
+}

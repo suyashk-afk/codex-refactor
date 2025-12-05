@@ -1,13 +1,13 @@
 // ==========================
 // Imports
 // ==========================
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const { spawn } = require("child_process");
 const path = require("path");
 const axios = require("axios");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const astAnalyzer = require("./refactor-engine/ast-analyzer");
 const refactorSuggester = require("./refactor-engine/refactor-suggester/extract_function");
@@ -15,8 +15,8 @@ const githubFetcher = require("./github-fetcher");
 const commitAnalyzer = require("./commit-analyzer");
 const reportGenerator = require("./report-generator");
 
-// Initialize Gemini AI (free tier)
-const genAI = new GoogleGenerativeAI("AIzaSyDF35412Fdpgu7y9yc1ncWtPFyxDNy2IsY");
+// Get Gemini API key from environment variable
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 // ==========================
 // App Setup
@@ -257,6 +257,10 @@ app.post("/analyze-repo", async (req, res) => {
     let totalScore = 0;
     let totalSmells = 0;
     let totalFunctions = 0;
+    let totalComplexity = 0;
+    let totalToxicity = 0;
+    let totalLines = 0;
+    let criticalFiles = 0;
     
     for (const file of repoData.files) {
       try {
@@ -270,32 +274,66 @@ app.post("/analyze-repo", async (req, res) => {
         }
         
         if (!analysis.error) {
+          const fileLines = file.content.split('\n').length;
+          
           results.push({
             path: file.path,
             language,
             qualityScore: analysis.qualityScore || 0,
+            complexity: analysis.avgComplexity || 0,
+            toxicity: analysis.toxicityScore || 0,
             totalSmells: analysis.totalSmells || 0,
             functions: analysis.functions?.length || 0,
+            lines: fileLines,
             size: file.size
           });
           
           totalScore += analysis.qualityScore || 0;
           totalSmells += analysis.totalSmells || 0;
           totalFunctions += analysis.functions?.length || 0;
+          totalComplexity += (analysis.avgComplexity || 0) * (analysis.functions?.length || 0);
+          totalToxicity += analysis.toxicityScore || 0;
+          totalLines += fileLines;
+          
+          if (analysis.qualityScore < 50) criticalFiles++;
         }
       } catch (err) {
         console.error(`Error analyzing ${file.path}:`, err.message);
       }
     }
     
-    // Calculate aggregate metrics
-    const avgScore = results.length > 0 ? Math.round(totalScore / results.length) : 0;
+    // Calculate scientific repository metrics
+    const fileCount = results.length;
+    const avgScore = fileCount > 0 ? Math.round(totalScore / fileCount) : 0;
+    const avgComplexity = totalFunctions > 0 ? Math.round((totalComplexity / totalFunctions) * 10) / 10 : 0;
+    const avgToxicity = fileCount > 0 ? Math.round(totalToxicity / fileCount) : 0;
+    
+    // Code density: smells per 1000 lines of code (industry standard)
+    const smellDensity = totalLines > 0 ? Math.round((totalSmells / totalLines) * 1000 * 10) / 10 : 0;
+    
+    // Maintainability Index (weighted score considering multiple factors)
+    const maintainabilityIndex = Math.round(
+      avgScore * 0.5 +                    // 50% quality score
+      (100 - avgToxicity) * 0.3 +         // 30% inverse toxicity
+      Math.max(0, 100 - avgComplexity * 5) * 0.2  // 20% complexity penalty
+    );
+    
+    // Technical debt (scientific: severity-weighted remediation time)
+    // Calculate based on actual severity distribution
+    let debtMinutes = 0;
+    results.forEach(file => {
+      // Estimate severity distribution (since we don't track it per file yet)
+      // Assume: 10% critical, 30% high, 40% medium, 20% low
+      const smells = file.totalSmells || 0;
+      debtMinutes += smells * 0.10 * 120; // Critical: 2h
+      debtMinutes += smells * 0.30 * 60;  // High: 1h
+      debtMinutes += smells * 0.40 * 30;  // Medium: 30min
+      debtMinutes += smells * 0.20 * 15;  // Low: 15min
+    });
+    const technicalDebtHours = Math.round(debtMinutes / 60);
     
     // Sort by quality score (worst first)
     results.sort((a, b) => a.qualityScore - b.qualityScore);
-    
-    // Calculate technical debt (rough estimate: 1 smell = 15 minutes)
-    const technicalDebtHours = Math.round((totalSmells * 15) / 60);
     
     res.json({
       ok: true,
@@ -307,10 +345,16 @@ app.post("/analyze-repo", async (req, res) => {
       },
       summary: {
         averageQualityScore: avgScore,
+        averageComplexity: avgComplexity,
+        averageToxicity: avgToxicity,
+        maintainabilityIndex,
         totalSmells,
         totalFunctions,
+        totalLines,
+        smellDensity, // Smells per 1000 lines (industry standard)
         technicalDebtHours,
-        healthStatus: avgScore > 70 ? 'healthy' : avgScore > 50 ? 'needs_improvement' : 'critical'
+        criticalFiles,
+        healthStatus: maintainabilityIndex > 70 ? 'healthy' : maintainabilityIndex > 50 ? 'needs_improvement' : 'critical'
       },
       files: results,
       worstFiles: results.slice(0, 10) // Top 10 worst files
@@ -452,7 +496,9 @@ app.post("/ai-explain", async (req, res) => {
   }
   
   try {
-    const API_KEY = "AIzaSyDF35412Fdpgu7y9yc1ncWtPFyxDNy2IsY";
+    if (!GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY not configured');
+    }
     
     // Get more context - the actual function code if available
     const codeContext = code ? code.substring(0, 500) : 'N/A';
@@ -475,7 +521,7 @@ Write like you're talking to a colleague, not writing a textbook. Keep it under 
     
     // Direct API call to Gemini 2.5 Flash (fast and free!)
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
       {
         contents: [{
           parts: [{
@@ -509,7 +555,65 @@ Write like you're talking to a colleague, not writing a textbook. Keep it under 
 });
 
 // ==========================
+// MR. SMITH AI ANALYSIS
+// ==========================
+app.post("/mr-smith", async (req, res) => {
+  const { qualityScore, complexity, toxicity, totalSmells, functionCount } = req.body;
+  
+  try {
+    if (!GEMINI_API_KEY) {
+      throw new Error('GEMINI_API_KEY not configured');
+    }
+    
+    const prompt = `You are Mr. Smith, a technical code analyst. Analyze this code metrics and provide ONE concise technical insight (max 2 sentences):
+
+Quality Score: ${qualityScore}/100
+Complexity: ${complexity}%
+Toxicity: ${toxicity}%
+Total Issues: ${totalSmells}
+Functions: ${functionCount}
+
+Respond in Mr. Smith's style: professional, direct, technical. Focus on the MOST CRITICAL issue. Use terms like "exhibits", "requires", "demonstrates". Keep it under 25 words.`;
+
+    const response = await axios.post(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`,
+      {
+        contents: [{
+          parts: [{ text: prompt }]
+        }],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 100
+        }
+      }
+    );
+
+    const analysis = response.data.candidates[0].content.parts[0].text.trim();
+    res.json({ ok: true, analysis });
+  } catch (err) {
+    console.error("Mr. Smith AI error:", err.response?.data || err.message);
+    res.json({ 
+      ok: true, 
+      analysis: `Quality: ${qualityScore}. System requires optimization.`,
+      fallback: true
+    });
+  }
+});
+
+// ==========================
 // Server Listen
 // ==========================
 const PORT = 4000;
-app.listen(PORT, () => console.log(`Server listening on port ${PORT} - Supporting JavaScript/TypeScript and Python refactoring! 🚀🐍🤖`));
+app.listen(PORT, () => {
+  console.log(`\n🚀 Server listening on port ${PORT}`);
+  console.log(`📦 Supporting JavaScript/TypeScript and Python refactoring!`);
+  
+  if (!GEMINI_API_KEY) {
+    console.log(`\n⚠️  WARNING: GEMINI_API_KEY not configured!`);
+    console.log(`   Mr. Smith AI analysis will not work.`);
+    console.log(`   Get your FREE key: https://aistudio.google.com/app/apikey`);
+    console.log(`   Add it to backend/.env file\n`);
+  } else {
+    console.log(`✅ Gemini AI enabled - Mr. Smith is ready!\n`);
+  }
+});

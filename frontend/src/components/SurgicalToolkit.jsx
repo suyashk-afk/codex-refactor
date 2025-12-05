@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import './SurgicalToolkit.css';
 
 /**
@@ -54,6 +54,9 @@ export default function SurgicalToolkit({ onToolSelect, isActive = false }) {
   const [isOpen, setIsOpen] = useState(false);
   const [hoveredTool, setHoveredTool] = useState(null);
   const [selectedTool, setSelectedTool] = useState(null);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const dragRef = useRef(null);
 
   const handleToolClick = (tool) => {
     setSelectedTool(tool.id);
@@ -66,7 +69,16 @@ export default function SurgicalToolkit({ onToolSelect, isActive = false }) {
   };
 
   return (
-    <div className="surgical-toolkit">
+    <motion.div 
+      ref={dragRef}
+      className="surgical-toolkit"
+      drag
+      dragMomentum={false}
+      dragElastic={0}
+      onDragStart={() => setIsDragging(true)}
+      onDragEnd={() => setIsDragging(false)}
+      style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+    >
       {/* Center Button - Opens Radial Menu */}
       <motion.button
         className={`toolkit-center ${isOpen ? 'open' : ''} ${isActive ? 'active' : ''}`}
@@ -260,6 +272,6 @@ export default function SurgicalToolkit({ onToolSelect, isActive = false }) {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }

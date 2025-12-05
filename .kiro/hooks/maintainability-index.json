@@ -1,0 +1,9 @@
+{
+  "name": "Maintainability Index Check",
+  "description": "Calculate Microsoft Maintainability Index (0-100) for modified files",
+  "trigger": "onFileSave",
+  "action": "sendMessage",
+  "message": "Calculate the Maintainability Index for this file using the formula: MI = 0.5*Quality + 0.3*(100-Toxicity) + 0.2*(100-5*Complexity). If MI < 50, flag as critical.",
+  "filePattern": "**/*.{js,jsx,ts,tsx,py}",
+  "enabled": true
+}

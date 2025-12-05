@@ -10,38 +10,48 @@ export default function LiveWires({ isActive, hasError, activityLevel = 'idle' }
   const [pulses, setPulses] = useState([]);
   const [sparkPositions, setSparkPositions] = useState([]);
 
-  // Generate random sparks when there's activity
+  // OPTIMIZED: Reduced spark generation
   useEffect(() => {
-    if (isActive) {
+    if (isActive && activityLevel === 'high') {
       const interval = setInterval(() => {
         const newSpark = {
           id: Date.now(),
           x: Math.random() * 100,
           y: Math.random() * 100,
         };
-        setSparkPositions(prev => [...prev, newSpark]);
+        setSparkPositions(prev => {
+          // Limit to max 3 sparks at once
+          if (prev.length >= 3) return prev;
+          return [...prev, newSpark];
+        });
         
         // Remove spark after animation
         setTimeout(() => {
           setSparkPositions(prev => prev.filter(s => s.id !== newSpark.id));
-        }, 2000);
-      }, hasError ? 300 : 1000);
+        }, 1500);
+      }, hasError ? 800 : 2000); // Much less frequent
 
       return () => clearInterval(interval);
+    } else {
+      setSparkPositions([]);
     }
-  }, [isActive, hasError]);
+  }, [isActive, hasError, activityLevel]);
 
-  // Generate pulses based on activity
+  // OPTIMIZED: Reduced pulse generation
   useEffect(() => {
     if (isActive) {
-      const speed = activityLevel === 'high' ? 500 : activityLevel === 'medium' ? 1000 : 2000;
+      const speed = activityLevel === 'high' ? 1500 : activityLevel === 'medium' ? 3000 : 5000;
       
       const interval = setInterval(() => {
         const newPulse = {
           id: Date.now(),
-          path: Math.floor(Math.random() * 4), // 4 wire paths
+          path: Math.floor(Math.random() * 2), // Only 2 paths instead of 4
         };
-        setPulses(prev => [...prev, newPulse]);
+        setPulses(prev => {
+          // Limit to max 2 pulses at once
+          if (prev.length >= 2) return prev;
+          return [...prev, newPulse];
+        });
         
         // Remove pulse after animation completes
         setTimeout(() => {
@@ -177,7 +187,7 @@ export default function LiveWires({ isActive, hasError, activityLevel = 'idle' }
         <div className="node-glow"></div>
       </div>
 
-      {/* Electric Sparks */}
+      {/* Electric Sparks - OPTIMIZED: Simplified */}
       {sparkPositions.map(spark => (
         <div
           key={spark.id}
@@ -188,9 +198,6 @@ export default function LiveWires({ isActive, hasError, activityLevel = 'idle' }
           }}
         >
           <div className="spark-core"></div>
-          <div className="spark-bolt spark-bolt-1"></div>
-          <div className="spark-bolt spark-bolt-2"></div>
-          <div className="spark-bolt spark-bolt-3"></div>
         </div>
       ))}
 

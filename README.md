@@ -1,6 +1,6 @@
 # ⚗️ Refactor Codex: The Code Resurrection Engine
 
-> **Kiroween 2024 Hackathon Entry - Frankenstein Category**
+> **Frankenstein Category Entry**
 
 <div align="center">
 
@@ -9,7 +9,7 @@
 ![MCP Tools](https://img.shields.io/badge/MCP%20Tools-4-purple)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-**[🎥 Demo Video](#) | [🚀 Live Demo](#) | [📖 Documentation](#how-i-used-kiro)**
+**[🎥 Demo Video](#) | [🚀 Live Demo](#) | [📖 Full Documentation](documentation/)**
 
 </div>
 
@@ -115,18 +115,35 @@ Most projects claim to be "Frankenstein" but just use multiple libraries. We **a
 
 ### Quick Start
 ```bash
-# 1. Start backend
+# 1. Setup API Key (REQUIRED for AI features)
 cd backend
+cp .env.example .env
+# Edit .env and add your Gemini API key:
+# GEMINI_API_KEY=your_key_here
+# Get free key: https://aistudio.google.com/app/apikey
+
+# 2. Start backend
 npm install
 npm start
 
-# 2. Start frontend (new terminal)
+# 3. Start frontend (new terminal)
 cd frontend
 npm install
 npm run dev
 
-# 3. Open http://localhost:5173
+# 4. Open http://localhost:5173
 ```
+
+### 🔑 API Key Setup (Important!)
+
+The Mr. Smith AI analysis requires a Google Gemini API key:
+
+1. Get your **FREE** API key: https://aistudio.google.com/app/apikey
+2. Open `backend/.env` file
+3. Add your key: `GEMINI_API_KEY=your_actual_key_here`
+4. Restart the backend server
+
+**Why?** The API key is stored in `.env` which is in `.gitignore` - it won't be uploaded to GitHub, keeping your key safe!
 
 ### Try It With Kiro
 ```bash
@@ -304,6 +321,18 @@ refactor-codex/
 
 ---
 
+## 📚 Additional Documentation
+
+For more detailed documentation, see the [`documentation/`](documentation/) folder:
+
+- **[Judges Start Here](documentation/JUDGES_START_HERE.md)** - Complete navigation guide
+- **[Quick Start](documentation/QUICK_START.md)** - 5-minute setup
+- **[Winning Feature](documentation/WINNING_FEATURE.md)** - Time machine deep dive
+- **[How Scores Work](documentation/HOW_SCORES_WORK.md)** - Scientific metrics explained
+- **[MCP Tools Reference](documentation/MCP_TOOL_REFERENCE.md)** - All 5 MCP tools
+- **[Design System](documentation/DESIGN_SYSTEM.md)** - UI components and theme
+- **[Deployment Guide](documentation/DEPLOYMENT.md)** - Production deployment
+
 ## 📝 License
 
 MIT License - See [LICENSE](LICENSE) for details
@@ -312,7 +341,7 @@ MIT License - See [LICENSE](LICENSE) for details
 
 ## 🙏 Acknowledgments
 
-Built with ❤️ (and a little darkness) for **Kiroween 2024**
+Built with ❤️ (and a little darkness)
 
 Special thanks to:
 - **Kiro IDE** - for being the best AI pair programmer

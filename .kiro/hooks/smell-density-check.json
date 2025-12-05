@@ -1,0 +1,9 @@
+{
+  "name": "Smell Density Check",
+  "description": "Calculate code smell density per 1000 lines (industry standard metric)",
+  "trigger": "onFileSave",
+  "action": "sendMessage",
+  "message": "Calculate smell density (smells per 1000 LOC) for this file. Industry standards: <5 excellent, 5-10 good, 10-20 needs attention, >20 critical. Report the density and category.",
+  "filePattern": "**/*.{js,jsx,ts,tsx,py}",
+  "enabled": true
+}

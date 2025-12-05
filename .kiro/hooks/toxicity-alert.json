@@ -1,0 +1,9 @@
+{
+  "name": "Toxicity Alert",
+  "description": "Alert when code toxicity exceeds 60% (based on severity-weighted smell density)",
+  "trigger": "onFileSave",
+  "action": "sendMessage",
+  "message": "Calculate the toxicity score for this file. If it exceeds 60%, show me the top 3 issues to fix first based on severity weights.",
+  "filePattern": "**/*.{js,jsx,ts,tsx,py}",
+  "enabled": true
+}

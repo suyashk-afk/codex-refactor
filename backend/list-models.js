@@ -1,7 +1,15 @@
 // List all available Gemini models for your API key
+require('dotenv').config();
 const axios = require('axios');
 
-const API_KEY = "AIzaSyDF35412Fdpgu7y9yc1ncWtPFyxDNy2IsY"; // Replace with your actual key
+const API_KEY = process.env.GEMINI_API_KEY;
+
+if (!API_KEY) {
+  console.error("❌ ERROR: GEMINI_API_KEY not found in .env file");
+  console.log("Please add your API key to backend/.env file:");
+  console.log("GEMINI_API_KEY=your_key_here");
+  process.exit(1);
+}
 
 async function listModels() {
   try {
