@@ -5,6 +5,7 @@ import './ui-fixes.css';
 import './ui-polish.css';
 import './horror-fonts.css';
 import { diffLines } from "diff";
+import { getApiUrl } from './config';
 import LiveWires from './components/LiveWires';
 import ThreeBackground from './components/ThreeBackground';
 import LabConsole from './components/LabConsole';
@@ -188,7 +189,7 @@ export default function App() {
                        code.includes('class ') || code.includes('self.');
       const filename = isPython ? 'code.py' : 'code.js';
       
-      const res = await axios.post("http://localhost:4000/analyze", { 
+      const res = await axios.post(getApiUrl("/analyze"), { 
         code: code,
         filename: filename
       });
@@ -223,7 +224,7 @@ export default function App() {
       // Get Mr. Smith AI analysis for all successful analyses
       if (analysisData) {
         try {
-          const smithRes = await axios.post("http://localhost:4000/mr-smith", {
+          const smithRes = await axios.post(getApiUrl("/mr-smith"), {
             qualityScore: analysisData.qualityScore || 0,
             complexity: analysisData.avgComplexity || 0,
             toxicity: analysisData.totalSmells || 0,
@@ -271,7 +272,7 @@ export default function App() {
                        code.includes('class ') || code.includes('self.');
       const filename = isPython ? 'code.py' : 'code.js';
       
-      const res = await axios.post("http://localhost:4000/suggest", { 
+      const res = await axios.post(getApiUrl("/suggest"), { 
         code: code,
         filename: filename
       });
@@ -321,7 +322,7 @@ export default function App() {
     setRepoAnalysis(null);
     
     try {
-      const res = await axios.post("http://localhost:4000/analyze-repo", { 
+      const res = await axios.post(getApiUrl("/analyze-repo"), { 
         repoUrl: repoUrl,
         maxFiles: 30
       });
@@ -343,7 +344,7 @@ export default function App() {
     setAiLoading(prev => ({ ...prev, [smellKey]: true }));
     
     try {
-      const res = await axios.post("http://localhost:4000/ai-explain", {
+      const res = await axios.post(getApiUrl("/ai-explain"), {
         smell,
         code,
         functionName
@@ -383,7 +384,7 @@ export default function App() {
     setHistoryData(null);
     
     try {
-      const res = await axios.post("http://localhost:4000/analyze-history", { 
+      const res = await axios.post(getApiUrl("/analyze-history"), { 
         repoUrl: historyRepoUrl,
         filePath: historyFilePath,
         maxCommits: 10
