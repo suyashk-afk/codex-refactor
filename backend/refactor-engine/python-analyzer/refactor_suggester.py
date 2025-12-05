@@ -17,10 +17,14 @@ class RefactorAnalyzer(ast.NodeVisitor):
         self.source_code = source_code
         
     def visit_FunctionDef(self, node):
-        # Only suggest refactoring for functions longer than 10 lines
+        # Suggest refactoring for functions that are long enough
         function_length = node.end_lineno - node.lineno + 1 if node.end_lineno else 0
         
-        if function_length >= 10:
+        # Count total statements including nested ones
+        total_statements = sum(1 for _ in ast.walk(node) if isinstance(_, ast.stmt))
+        
+        # Suggest if function is long (10+ lines) OR has many statements (8+)
+        if function_length >= 10 or total_statements >= 8:
             suggestion = self._analyze_function(node)
             if suggestion:
                 self.suggestions.append(suggestion)
@@ -85,34 +89,62 @@ class RefactorAnalyzer(ast.NodeVisitor):
     
     def _find_extractable_block(self, body):
         """Find a block of statements that can be extracted"""
-        # Look for sequences of at least 3 statements
-        if len(body) < 4:
+        if not body:
             return None
         
-        # Try to find a good chunk (skip the last statement if it's a return)
-        end_idx = len(body) - 1 if isinstance(body[-1], ast.Return) else len(body)
+        # Strategy 1: Look for complex if blocks (good extraction candidates)
+        for i, stmt in enumerate(body):
+            if isinstance(stmt, ast.If):
+                # If the if block is substantial, suggest extracting it
+                if stmt.end_lineno and (stmt.end_lineno - stmt.lineno) >= 5:
+                    return (stmt.lineno, stmt.end_lineno, [stmt])
         
-        if end_idx < 3:
-            return None
+        # Strategy 2: Look for loops (good extraction candidates)
+        for i, stmt in enumerate(body):
+            if isinstance(stmt, (ast.For, ast.While)):
+                # Check if there are statements before the loop
+                if i > 0 and i >= 2:
+                    # Extract statements before the loop
+                    statements = body[0:i]
+                    start_line = statements[0].lineno
+                    end_line = statements[-1].end_lineno or statements[-1].lineno
+                    if end_line - start_line + 1 >= 3:
+                        return (start_line, end_line, statements)
+                
+                # Or extract the loop itself if it's complex
+                if stmt.end_lineno and (stmt.end_lineno - stmt.lineno) >= 5:
+                    return (stmt.lineno, stmt.end_lineno, [stmt])
         
-        # Take first 3 statements (or up to the return)
-        start_idx = 0
-        take_count = min(3, end_idx)
-        statements = body[start_idx:take_count]
+        # Strategy 3: Extract middle section (avoid first and last statements)
+        if len(body) >= 6:
+            # Skip first statement, take next 3-4 statements
+            start_idx = 1
+            end_idx = min(4, len(body) - 2)  # Leave at least last statement
+            statements = body[start_idx:end_idx]
+            
+            if statements:
+                start_line = statements[0].lineno
+                end_line = statements[-1].end_lineno or statements[-1].lineno
+                if end_line - start_line + 1 >= 3:
+                    return (start_line, end_line, statements)
         
-        if not statements:
-            return None
+        # Strategy 4: Take first chunk (but not if last is return)
+        if len(body) >= 3:
+            end_idx = len(body) - 1 if isinstance(body[-1], ast.Return) else len(body)
+            
+            if end_idx >= 2:
+                take_count = min(2, end_idx)
+                statements = body[0:take_count]
+                
+                if statements:
+                    start_line = statements[0].lineno
+                    end_line = statements[-1].end_lineno or statements[-1].lineno
+                    lines = end_line - start_line + 1
+                    
+                    if lines >= 5:  # Only if substantial
+                        return (start_line, end_line, statements)
         
-        start_line = statements[0].lineno
-        end_line = statements[-1].end_lineno if statements[-1].end_lineno else statements[-1].lineno
-        
-        lines = end_line - start_line + 1
-        
-        # Only suggest if substantial (3+ lines)
-        if lines < 3:
-            return None
-        
-        return (start_line, end_line, statements)
+        return None
     
     def _find_external_variables(self, statements, function_node):
         """Find variables used in statements that come from outside"""
@@ -145,28 +177,50 @@ class RefactorAnalyzer(ast.NodeVisitor):
         
         for stmt in statements:
             if isinstance(stmt, ast.For):
-                keywords.append('loop')
+                # Get the target variable name
+                if isinstance(stmt.target, ast.Name):
+                    keywords.append(f'process_{stmt.target.id}')
+                else:
+                    keywords.append('process_items')
             elif isinstance(stmt, ast.If):
-                keywords.append('check')
+                # Try to extract condition info
+                keywords.append('validate')
             elif isinstance(stmt, ast.Assign):
-                keywords.append('process')
+                # Get variable names being assigned
+                for target in stmt.targets:
+                    if isinstance(target, ast.Name):
+                        keywords.append(f'calculate_{target.id}')
+                        break
+            elif isinstance(stmt, ast.Return):
+                keywords.append('compute_result')
             
-            # Look for function calls
+            # Look for function calls to understand purpose
             for node in ast.walk(stmt):
                 if isinstance(node, ast.Call):
                     if isinstance(node.func, ast.Name):
-                        keywords.append(node.func.id)
+                        func_name = node.func.id
+                        if func_name not in ['print', 'len', 'str', 'int', 'float', 'list', 'dict']:
+                            keywords.append(func_name)
                     elif isinstance(node.func, ast.Attribute):
                         keywords.append(node.func.attr)
         
-        # Use first 2 keywords
-        name_parts = [k for k in keywords if len(k) > 2][:2]
+        # Use first 2 meaningful keywords
+        name_parts = [k for k in keywords if len(k) > 2 and not k.startswith('_')][:2]
         
         if name_parts:
-            return 'extracted_' + '_'.join(name_parts)
+            # Clean up the name
+            clean_name = '_'.join(name_parts).replace('__', '_')
+            return clean_name if not clean_name.startswith('extracted_') else clean_name
         
-        # Fallback to random
-        return 'extracted_' + ''.join(random.choices(string.ascii_lowercase, k=8))
+        # Better fallback names based on statement types
+        if any(isinstance(s, ast.For) for s in statements):
+            return 'process_loop_logic'
+        elif any(isinstance(s, ast.If) for s in statements):
+            return 'validate_conditions'
+        elif any(isinstance(s, ast.Assign) for s in statements):
+            return 'calculate_values'
+        
+        return 'extracted_logic'
     
     def _build_extracted_function(self, name, params, statements, is_async):
         """Build the extracted function code"""

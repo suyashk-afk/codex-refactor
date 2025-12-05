@@ -113,58 +113,128 @@ class CodeAnalyzer(ast.NodeVisitor):
     
     def _detect_smells(self, func_data, node):
         smells = []
+        complexity = calculate_complexity(func_data)
         
-        if func_data['length'] > 20:
+        # Long function detection (matching JS thresholds)
+        if func_data['length'] > 100:
+            smells.append({
+                'type': 'long_function',
+                'severity': 'critical',
+                'line': func_data['start'],
+                'message': f"Function '{func_data['name']}' is {func_data['length']} lines long (critical threshold: 100+)",
+                'suggestion': 'Break this function into multiple smaller, focused functions'
+            })
+        elif func_data['length'] > 50:
             smells.append({
                 'type': 'long_function',
                 'severity': 'high',
-                'message': f"Function '{func_data['name']}' is {func_data['length']} lines long. Consider breaking it into smaller functions.",
-                'suggestion': 'Extract logical blocks into separate functions'
+                'line': func_data['start'],
+                'message': f"Function '{func_data['name']}' is {func_data['length']} lines long (high threshold: 50+)",
+                'suggestion': 'Consider extracting logical blocks into separate functions'
+            })
+        elif func_data['length'] > 20:
+            smells.append({
+                'type': 'moderate_function',
+                'severity': 'medium',
+                'line': func_data['start'],
+                'message': f"Function '{func_data['name']}' is {func_data['length']} lines long",
+                'suggestion': 'Could be simplified by extracting some logic'
             })
         
-        if func_data['nesting'] > 3:
+        # Deep nesting detection
+        if func_data['nesting'] > 4:
             smells.append({
                 'type': 'deep_nesting',
                 'severity': 'high',
-                'message': f"Function '{func_data['name']}' has nesting depth of {func_data['nesting']}. This makes code hard to read.",
-                'suggestion': 'Use early returns or extract nested logic into helper functions'
+                'line': func_data['start'],
+                'message': f"Function '{func_data['name']}' has nesting depth of {func_data['nesting']} (threshold: 4)",
+                'suggestion': 'Use early returns, guard clauses, or extract nested logic'
+            })
+        elif func_data['nesting'] > 3:
+            smells.append({
+                'type': 'moderate_nesting',
+                'severity': 'medium',
+                'line': func_data['start'],
+                'message': f"Function '{func_data['name']}' has nesting depth of {func_data['nesting']}",
+                'suggestion': 'Consider flattening with early returns'
             })
         
-        if func_data['branchCount'] > 10:
+        # High complexity detection (McCabe)
+        if complexity > 20:
+            smells.append({
+                'type': 'high_complexity',
+                'severity': 'critical',
+                'line': func_data['start'],
+                'message': f"Function '{func_data['name']}' has cyclomatic complexity of {complexity} (critical: 20+)",
+                'suggestion': 'Refactor immediately - this is untestable'
+            })
+        elif complexity > 10:
             smells.append({
                 'type': 'high_complexity',
                 'severity': 'high',
-                'message': f"Function '{func_data['name']}' has {func_data['branchCount']} decision points. This is very complex.",
-                'suggestion': 'Simplify logic or break into smaller functions'
+                'line': func_data['start'],
+                'message': f"Function '{func_data['name']}' has cyclomatic complexity of {complexity} (high: 10+)",
+                'suggestion': 'Break into smaller functions to reduce complexity'
+            })
+        elif complexity > 7:
+            smells.append({
+                'type': 'moderate_complexity',
+                'severity': 'medium',
+                'line': func_data['start'],
+                'message': f"Function '{func_data['name']}' has cyclomatic complexity of {complexity}",
+                'suggestion': 'Consider simplifying the logic'
             })
         
-        if func_data['params'] > 4:
+        # Too many parameters
+        if func_data['params'] > 5:
+            smells.append({
+                'type': 'too_many_parameters',
+                'severity': 'high',
+                'line': func_data['start'],
+                'message': f"Function '{func_data['name']}' has {func_data['params']} parameters (threshold: 5)",
+                'suggestion': 'Use a dataclass, dictionary, or configuration object'
+            })
+        elif func_data['params'] > 3:
             smells.append({
                 'type': 'too_many_parameters',
                 'severity': 'medium',
-                'message': f"Function '{func_data['name']}' has {func_data['params']} parameters.",
-                'suggestion': 'Consider using a configuration object or dataclass'
+                'line': func_data['start'],
+                'message': f"Function '{func_data['name']}' has {func_data['params']} parameters",
+                'suggestion': 'Consider grouping related parameters'
             })
         
+        # Magic numbers
         magic_numbers = self._find_magic_numbers(node)
-        if magic_numbers:
+        if len(magic_numbers) > 3:
             smells.append({
                 'type': 'magic_numbers',
                 'severity': 'medium',
-                'message': f"Function '{func_data['name']}' contains magic numbers: {', '.join(map(str, magic_numbers))}",
-                'suggestion': 'Extract magic numbers into named constants'
+                'line': func_data['start'],
+                'message': f"Function '{func_data['name']}' contains {len(magic_numbers)} magic numbers",
+                'suggestion': 'Extract magic numbers into named constants at module level'
+            })
+        elif magic_numbers:
+            smells.append({
+                'type': 'magic_numbers',
+                'severity': 'low',
+                'line': func_data['start'],
+                'message': f"Function '{func_data['name']}' contains magic numbers: {', '.join(map(str, magic_numbers[:3]))}",
+                'suggestion': 'Consider using named constants for clarity'
             })
         
+        # Missing error handling
         has_try = any(isinstance(stmt, ast.Try) for stmt in ast.walk(node))
-        if not has_try and func_data['length'] > 10:
+        if not has_try and func_data['length'] > 15:
             smells.append({
                 'type': 'missing_error_handling',
                 'severity': 'medium',
-                'message': f"Function '{func_data['name']}' lacks error handling.",
+                'line': func_data['start'],
+                'message': f"Function '{func_data['name']}' lacks error handling",
                 'suggestion': 'Add try-except blocks for potential errors'
             })
         
         func_data['smells'] = smells
+        func_data['complexity'] = complexity
     
     def _find_magic_numbers(self, node):
         magic_numbers = set()
@@ -176,31 +246,102 @@ class CodeAnalyzer(ast.NodeVisitor):
         
         return sorted(magic_numbers)
 
+def calculate_complexity(func):
+    """Calculate McCabe cyclomatic complexity: M = E - N + 2P (simplified to branches + 1)"""
+    return func['branchCount'] + 1
+
+def calculate_toxicity(analysis):
+    """Calculate toxicity score based on severity-weighted code smells"""
+    if not analysis['functions']:
+        return 0
+    
+    severity_weights = {
+        'high': 10,
+        'medium': 5,
+        'low': 2
+    }
+    
+    type_multipliers = {
+        'high_complexity': 1.5,
+        'deep_nesting': 1.3,
+        'long_function': 1.2,
+        'too_many_parameters': 1.0,
+        'magic_numbers': 1.0,
+        'missing_error_handling': 1.1
+    }
+    
+    total_toxicity = 0
+    
+    for func in analysis['functions']:
+        for smell in func.get('smells', []):
+            weight = severity_weights.get(smell['severity'], 5)
+            multiplier = type_multipliers.get(smell['type'], 1.0)
+            total_toxicity += weight * multiplier
+    
+    # Normalize to 0-100 scale (assume max 20 smells at high severity)
+    max_possible = 20 * 10 * 1.5
+    toxicity = min(100, (total_toxicity / max_possible) * 100)
+    
+    return round(toxicity)
+
+def calculate_maintainability_index(quality_score, toxicity, avg_complexity):
+    """Calculate maintainability index: MI = 0.5*Q + 0.3*(100-T) + 0.2*(100-5C)"""
+    complexity_penalty = min(100, avg_complexity * 5)
+    mi = 0.5 * quality_score + 0.3 * (100 - toxicity) + 0.2 * (100 - complexity_penalty)
+    return round(max(0, min(100, mi)))
+
 def calculate_quality_score(analysis):
-    # If no functions, return perfect score
+    """Calculate quality score matching JavaScript algorithm"""
     if not analysis['functions']:
         return 100
     
-    penalties = {
-        'long_function': 8,
-        'deep_nesting': 10,
-        'high_complexity': 12,
-        'too_many_parameters': 6,
-        'magic_numbers': 5,
-        'missing_error_handling': 8
-    }
-    
     total_score = 0
     
-    # Calculate score per function, then average
     for func in analysis['functions']:
+        # Start with base score
         fn_score = 100
         
-        for smell in func.get('smells', []):
-            fn_score -= penalties.get(smell['type'], 5)
+        # Calculate complexity for this function
+        complexity = calculate_complexity(func)
         
-        # Bonus for concise functions
-        if func['length'] < 15:
+        # Penalties based on metrics
+        if complexity > 20:
+            fn_score -= 30
+        elif complexity > 10:
+            fn_score -= 20
+        elif complexity > 7:
+            fn_score -= 10
+        elif complexity > 4:
+            fn_score -= 5
+        
+        # Length penalties
+        if func['length'] > 100:
+            fn_score -= 25
+        elif func['length'] > 50:
+            fn_score -= 15
+        elif func['length'] > 20:
+            fn_score -= 8
+        
+        # Nesting penalties
+        if func['nesting'] > 4:
+            fn_score -= 20
+        elif func['nesting'] > 3:
+            fn_score -= 12
+        elif func['nesting'] > 2:
+            fn_score -= 6
+        
+        # Parameter penalties
+        if func['params'] > 5:
+            fn_score -= 10
+        elif func['params'] > 3:
+            fn_score -= 5
+        
+        # Smell penalties
+        smell_count = len(func.get('smells', []))
+        fn_score -= smell_count * 3
+        
+        # Bonus for good practices
+        if func['length'] < 15 and complexity < 5:
             fn_score += 5
         
         total_score += max(0, min(100, fn_score))
@@ -235,6 +376,12 @@ def analyze_python_code(code, filename='file.py'):
     if analyzer.functions:
         avg_length = sum(f['length'] for f in analyzer.functions) // len(analyzer.functions)
     
+    # Calculate average complexity
+    avg_complexity = 0
+    if analyzer.functions:
+        total_complexity = sum(calculate_complexity(f) for f in analyzer.functions)
+        avg_complexity = round(total_complexity / len(analyzer.functions), 2)
+    
     result = {
         'imports': analyzer.imports,
         'exports': 0,
@@ -242,19 +389,37 @@ def analyze_python_code(code, filename='file.py'):
         'totalSmells': total_smells,
         'smellsByType': dict(smells_by_type),
         'qualityScore': 0,
+        'toxicity': 0,
+        'maintainabilityIndex': 0,
         'summary': {
             'totalFunctions': len(analyzer.functions),
             'averageLength': avg_length,
+            'averageComplexity': avg_complexity,
             'healthStatus': 'unknown'
         }
     }
     
+    # Calculate all metrics
     result['qualityScore'] = calculate_quality_score(result)
+    result['toxicity'] = calculate_toxicity(result)
+    result['maintainabilityIndex'] = calculate_maintainability_index(
+        result['qualityScore'],
+        result['toxicity'],
+        avg_complexity
+    )
+    
+    # Calculate technical debt (15 minutes per smell)
+    technical_debt_minutes = total_smells * 15
+    result['technicalDebt'] = {
+        'minutes': technical_debt_minutes,
+        'hours': round(technical_debt_minutes / 60, 1),
+        'formatted': f"{technical_debt_minutes // 60}h {technical_debt_minutes % 60}m" if technical_debt_minutes >= 60 else f"{technical_debt_minutes}m"
+    }
     
     score = result['qualityScore']
     result['summary']['healthStatus'] = (
-        'healthy' if score > 80 else
-        'needs_improvement' if score > 50 else
+        'healthy' if score >= 80 else
+        'needs_improvement' if score >= 50 else
         'critical'
     )
     

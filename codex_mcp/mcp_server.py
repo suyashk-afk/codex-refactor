@@ -143,7 +143,7 @@ def format_analysis_result(result):
         for fn in analysis.get('functions', []):
             output += f"\n**{fn['name']}** ({fn['length']} lines)\n"
             output += f"- Nesting Depth: {fn['nesting']}\n"
-            output += f"- Cyclomatic Complexity: {fn['branchCount']}\n"
+            output += f"- Cyclomatic Complexity: {fn.get('complexity', fn['branchCount'] + 1)}\n"
             
             if fn.get('smells'):
                 output += "- Issues:\n"

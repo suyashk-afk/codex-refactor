@@ -33,7 +33,7 @@ function generateAnalysisReport(analysis, filename) {
       md += `### ${fn.name}\n\n`;
       md += `- **Length:** ${fn.length} lines\n`;
       md += `- **Nesting Depth:** ${fn.nesting}\n`;
-      md += `- **Complexity:** ${fn.branchCount}\n\n`;
+      md += `- **Cyclomatic Complexity:** ${fn.complexity || (fn.branchCount + 1)}\n\n`;
       
       if (fn.smells && fn.smells.length > 0) {
         md += `**Issues:**\n\n`;
