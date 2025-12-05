@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect, memo } from 'react';
+import SimpleMeter from './SimpleMeter';
 import './LabConsole.css';
 
 /**
@@ -64,134 +65,17 @@ const LabConsole = memo(function LabConsole({
         <div className="console-panel meters-panel">
           <div className="panel-label">DIAGNOSTIC METERS</div>
           
-          {/* Complexity Voltage Meter */}
-          <div className="analog-meter">
-            <div className="meter-label">COMPLEXITY VOLTAGE</div>
-            <svg viewBox="0 0 200 120" className="meter-svg">
-              {/* Meter Background */}
-              <defs>
-                <linearGradient id="meterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#1a1a1a" />
-                  <stop offset="100%" stopColor="#0a0a0a" />
-                </linearGradient>
-                <filter id="innerShadow">
-                  <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
-                  <feOffset dx="0" dy="2" result="offsetblur"/>
-                  <feComponentTransfer>
-                    <feFuncA type="linear" slope="0.5"/>
-                  </feComponentTransfer>
-                  <feMerge>
-                    <feMergeNode/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
-              </defs>
-              
-              {/* Meter Face */}
-              <circle cx="100" cy="100" r="80" fill="url(#meterGrad)" stroke="#8b6321" strokeWidth="3" filter="url(#innerShadow)"/>
-              
-              {/* Scale Marks */}
-              {[...Array(11)].map((_, i) => {
-                const angle = -135 + (i * 27);
-                const rad = (angle * Math.PI) / 180;
-                const x1 = 100 + Math.cos(rad) * 65;
-                const y1 = 100 + Math.sin(rad) * 65;
-                const x2 = 100 + Math.cos(rad) * 75;
-                const y2 = 100 + Math.sin(rad) * 75;
-                return (
-                  <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#8b6321" strokeWidth="2"/>
-                );
-              })}
-              
-              {/* Scale Numbers */}
-              {[0, 25, 50, 75, 100].map((num, i) => {
-                const angle = -135 + (i * 67.5);
-                const rad = (angle * Math.PI) / 180;
-                const x = 100 + Math.cos(rad) * 55;
-                const y = 100 + Math.sin(rad) * 55;
-                return (
-                  <text key={num} x={x} y={y} fill="#8b6321" fontSize="10" textAnchor="middle" dominantBaseline="middle">
-                    {num}
-                  </text>
-                );
-              })}
-              
-              {/* Danger Zone */}
-              <path
-                d="M 100 100 L 155 55 A 80 80 0 0 1 175 100 Z"
-                fill="rgba(139, 0, 0, 0.2)"
-                stroke="none"
-              />
-              
-              {/* Needle */}
-              <motion.g
-                initial={{ rotate: -135 }}
-                animate={{ rotate: -135 + (Math.min(Math.max(needleComplexity, 0), 100) * 2.7) }}
-                transition={{ type: 'spring', stiffness: 50, damping: 10 }}
-                style={{ transformOrigin: '100px 100px' }}
-              >
-                <line
-                  x1="100"
-                  y1="100"
-                  x2="100"
-                  y2="30"
-                  stroke="#ff0040"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  filter="drop-shadow(0 0 5px #ff0040)"
-                />
-              </motion.g>
-              
-              {/* Center Rivet */}
-              <circle cx="100" cy="100" r="8" fill="#8b6321" stroke="#b8860b" strokeWidth="2"/>
-              <circle cx="100" cy="100" r="4" fill="#5a3910"/>
-            </svg>
-            <div className="meter-reading">{Math.round(needleComplexity)}%</div>
-          </div>
-
-          {/* Toxicity Meter */}
-          <div className="analog-meter">
-            <div className="meter-label">CODE TOXICITY LEVEL</div>
-            <svg viewBox="0 0 200 120" className="meter-svg">
-              <circle cx="100" cy="100" r="80" fill="url(#meterGrad)" stroke="#8b6321" strokeWidth="3" filter="url(#innerShadow)"/>
-              
-              {/* Scale Marks */}
-              {[...Array(11)].map((_, i) => {
-                const angle = -135 + (i * 27);
-                const rad = (angle * Math.PI) / 180;
-                const x1 = 100 + Math.cos(rad) * 65;
-                const y1 = 100 + Math.sin(rad) * 65;
-                const x2 = 100 + Math.cos(rad) * 75;
-                const y2 = 100 + Math.sin(rad) * 75;
-                return (
-                  <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#8b6321" strokeWidth="2"/>
-                );
-              })}
-              
-              {/* Needle */}
-              <motion.g
-                initial={{ rotate: -135 }}
-                animate={{ rotate: -135 + (Math.min(Math.max(needleToxicity, 0), 100) * 2.7) }}
-                transition={{ type: 'spring', stiffness: 50, damping: 10 }}
-                style={{ transformOrigin: '100px 100px' }}
-              >
-                <line
-                  x1="100"
-                  y1="100"
-                  x2="100"
-                  y2="30"
-                  stroke="#39ff14"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  filter="drop-shadow(0 0 5px #39ff14)"
-                />
-              </motion.g>
-              
-              <circle cx="100" cy="100" r="8" fill="#8b6321" stroke="#b8860b" strokeWidth="2"/>
-              <circle cx="100" cy="100" r="4" fill="#5a3910"/>
-            </svg>
-            <div className="meter-reading">{Math.round(needleToxicity)}%</div>
-          </div>
+          <SimpleMeter 
+            value={needleComplexity} 
+            label="COMPLEXITY VOLTAGE" 
+            color="#ff0040" 
+          />
+          
+          <SimpleMeter 
+            value={needleToxicity} 
+            label="CODE TOXICITY LEVEL" 
+            color="#39ff14" 
+          />
         </div>
 
         {/* Center Panel - Oscilloscope */}

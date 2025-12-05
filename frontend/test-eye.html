@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Eye Tracking Test</title>
+  <style>
+    body { 
+      background: #000; 
+      margin: 0; 
+      padding: 50px; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .eye {
+      width: 60px;
+      height: 60px;
+      background: #f5f5dc;
+      border-radius: 50%;
+      position: relative;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+      margin: 0 20px;
+    }
+    .pupil {
+      width: 24px;
+      height: 24px;
+      background: #000;
+      border-radius: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease-out;
+    }
+    .glint {
+      width: 6px;
+      height: 6px;
+      background: rgba(255,255,255,0.8);
+      border-radius: 50%;
+      position: absolute;
+      top: 4px;
+      left: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="eye" id="eye1">
+    <div class="pupil" id="pupil1">
+      <div class="glint"></div>
+    </div>
+  </div>
+  <div class="eye" id="eye2">
+    <div class="pupil" id="pupil2">
+      <div class="glint"></div>
+    </div>
+  </div>
+
+  <script>
+    const eye1 = document.getElementById('eye1');
+    const eye2 = document.getElementById('eye2');
+    const pupil1 = document.getElementById('pupil1');
+    const pupil2 = document.getElementById('pupil2');
+
+    document.addEventListener('mousemove', (e) => {
+      updateEye(eye1, pupil1, e.clientX, e.clientY);
+      updateEye(eye2, pupil2, e.clientX, e.clientY);
+    });
+
+    function updateEye(eye, pupil, mouseX, mouseY) {
+      const eyeRect = eye.getBoundingClientRect();
+      const eyeCenterX = eyeRect.left + eyeRect.width / 2;
+      const eyeCenterY = eyeRect.top + eyeRect.height / 2;
+
+      const angle = Math.atan2(mouseY - eyeCenterY, mouseX - eyeCenterX);
+      const distance = Math.min(12, Math.hypot(mouseX - eyeCenterX, mouseY - eyeCenterY) / 20);
+
+      const x = Math.cos(angle) * distance;
+      const y = Math.sin(angle) * distance;
+
+      pupil.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+    }
+  </script>
+</body>
+</html>

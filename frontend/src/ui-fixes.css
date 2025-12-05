@@ -1,0 +1,211 @@
+/* ================================
+   🔧 UI FIXES & ALIGNMENT
+   Clean up layout issues
+   ================================ */
+
+/* Fix container overflow and alignment */
+.codex-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  overflow-x: hidden;
+}
+
+/* Ensure all sections have proper spacing */
+.hero-section,
+.editor-section,
+.action-section,
+.results-container,
+.suggestions-container {
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Fix z-index stacking */
+.live-wires-container {
+  z-index: 1;
+}
+
+.surgical-toolkit {
+  z-index: 100;
+}
+
+.lab-console {
+  z-index: 50;
+}
+
+.blood-ink-console {
+  z-index: 40;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.occult-loader-overlay {
+  z-index: 9999;
+}
+
+/* Fix button alignment */
+.action-section {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 30px 0;
+}
+
+.primary-btn,
+.secondary-btn,
+.repo-analyze-btn {
+  min-width: 200px;
+  padding: 15px 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Fix tab switcher alignment */
+.tab-switcher {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 30px 0;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  flex: 1;
+  min-width: 150px;
+  max-width: 250px;
+}
+
+/* Fix editor section */
+.editor-section {
+  margin: 20px 0;
+}
+
+.codex-input,
+.repo-input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Fix results container */
+.results-container {
+  margin-top: 40px;
+  clear: both;
+}
+
+/* Fix suggestion cards */
+.suggestion-card {
+  margin-bottom: 30px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Fix footer positioning */
+.footer {
+  margin-top: 60px;
+  padding: 30px 0;
+  text-align: center;
+  clear: both;
+}
+
+/* Fix cobweb graph container */
+.cobweb-container {
+  margin: 40px 0;
+  width: 100%;
+  overflow: visible;
+}
+
+/* Fix diff panel */
+.diff-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow: auto;
+}
+
+/* Fix alert positioning */
+.alert {
+  margin: 20px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Responsive fixes */
+@media (max-width: 768px) {
+  .codex-container {
+    padding: 30px 20px;
+    width: 95%;
+  }
+  
+  .action-section {
+    flex-direction: column;
+  }
+  
+  .primary-btn,
+  .secondary-btn {
+    width: 100%;
+  }
+  
+  .tab-btn {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
+
+/* Fix overlapping elements */
+.copper-pipe,
+.copper-joint,
+.electrical-spark,
+.flickering-light,
+.lab-shadow {
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Ensure proper stacking context */
+.hero-section {
+  position: relative;
+  z-index: 10;
+}
+
+.language-badge {
+  position: relative;
+  z-index: 11;
+}
+
+/* Fix console header alignment */
+.console-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Fix progress indicators */
+.circular-progress {
+  position: relative;
+  display: inline-block;
+}
+
+/* Clear floats */
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}

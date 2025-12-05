@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Meter Test</title>
+  <style>
+    body { background: #000; color: #fff; font-family: Arial; padding: 50px; }
+    .meter { background: rgba(0,0,0,0.5); padding: 20px; border: 2px solid #8b6321; border-radius: 8px; max-width: 400px; margin: 20px auto; }
+    .label { text-align: center; color: #8b6321; font-weight: bold; margin-bottom: 20px; }
+    .reading { text-align: center; font-size: 2rem; color: #39ff14; margin-top: 20px; }
+    input { width: 100%; margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <h1>Meter Geometry Test</h1>
+  <input type="range" id="slider" min="0" max="100" value="0" oninput="updateMeter(this.value)">
+  <div id="value">Value: 0%</div>
+  
+  <div class="meter">
+    <div class="label">TEST METER</div>
+    <svg id="meter" viewBox="0 0 200 150" style="width: 100%; max-width: 300px; display: block; margin: 0 auto;">
+      <!-- Arc -->
+      <path d="M 30 110 A 70 70 0 0 1 170 110" fill="#0a0a0a" stroke="#8b6321" stroke-width="3"/>
+      
+      <!-- Danger zone -->
+      <path d="M 100 110 L 149 61 A 70 70 0 0 1 170 110 Z" fill="rgba(139, 0, 0, 0.15)"/>
+      
+      <!-- Labels -->
+      <text x="15" y="115" fill="#8b6321" font-size="14" font-weight="bold" text-anchor="middle">0</text>
+      <text x="51" y="61" fill="#8b6321" font-size="14" font-weight="bold" text-anchor="middle">25</text>
+      <text x="100" y="35" fill="#8b6321" font-size="14" font-weight="bold" text-anchor="middle">50</text>
+      <text x="149" y="61" fill="#8b6321" font-size="14" font-weight="bold" text-anchor="middle">75</text>
+      <text x="185" y="115" fill="#8b6321" font-size="14" font-weight="bold" text-anchor="middle">100</text>
+      
+      <!-- Tick marks -->
+      <line x1="30" y1="110" x2="30" y2="100" stroke="#8b6321" stroke-width="2"/>
+      <line x1="51" y1="61" x2="56" y2="68" stroke="#8b6321" stroke-width="2"/>
+      <line x1="100" y1="40" x2="100" y2="50" stroke="#8b6321" stroke-width="2"/>
+      <line x1="149" y1="61" x2="144" y2="68" stroke="#8b6321" stroke-width="2"/>
+      <line x1="170" y1="110" x2="170" y2="100" stroke="#8b6321" stroke-width="2"/>
+      
+      <!-- Needle group - needle points RIGHT (to x=170), then rotates -->
+      <g id="needle" transform="rotate(-180 100 110)">
+        <line x1="100" y1="110" x2="170" y2="110" stroke="#39ff14" stroke-width="3" stroke-linecap="round" style="filter: drop-shadow(0 0 8px #39ff14)"/>
+        <polygon points="170,110 160,105 160,115" fill="#39ff14"/>
+      </g>
+      
+      <!-- Center rivet -->
+      <circle cx="100" cy="110" r="8" fill="#8b6321" stroke="#b8860b" stroke-width="2"/>
+      <circle cx="100" cy="110" r="4" fill="#5a3910"/>
+      <circle cx="100" cy="110" r="2" fill="#b8860b"/>
+    </svg>
+    <div class="reading" id="reading">0%</div>
+  </div>
+  
+  <script>
+    function updateMeter(value) {
+      // Calculate angle: -180° at 0% (left), 0° at 100% (right), clockwise
+      // Negative angles rotate clockwise
+      const angle = -180 + (value * 1.8);
+      
+      document.getElementById('needle').setAttribute('transform', `rotate(${angle} 100 110)`);
+      document.getElementById('value').textContent = `Value: ${value}%`;
+      document.getElementById('reading').textContent = `${value}%`;
+      
+      console.log(`Value: ${value}%, Angle: ${angle}°`);
+    }
+  </script>
+</body>
+</html>

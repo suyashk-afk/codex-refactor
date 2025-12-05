@@ -443,3 +443,45 @@
     flex: 1;
   }
 }
+
+
+/* ================================
+   METER FIXES
+   ================================ */
+
+.meter-svg {
+  width: 100%;
+  max-width: 250px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.meter-reading {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 2rem;
+  font-weight: 900;
+  color: #39ff14;
+  font-family: 'Courier New', monospace;
+  text-shadow: 0 0 10px rgba(57, 255, 20, 0.6);
+  letter-spacing: 3px;
+}
+
+.analog-meter {
+  margin: 30px 0;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid #8b6321;
+}
+
+.meter-label {
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #8b6321;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}

@@ -1,12 +1,16 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import axios from 'axios';
 import './codex.css';
+import './ui-fixes.css';
+import './ui-polish.css';
 import { diffLines } from "diff";
 import LiveWires from './components/LiveWires';
 import ThreeBackground from './components/ThreeBackground';
 import LabConsole from './components/LabConsole';
 import SurgicalToolkit from './components/SurgicalToolkit';
 import BloodInkConsole, { createLog } from './components/BloodInkConsole';
+import OccultLoader from './components/OccultLoader';
+import EyeOfRepository from './components/EyeOfRepository';
 
 // Lazy load CobwebGraph for better performance
 const CobwebGraph = lazy(() => import('./components/CobwebGraph'));
@@ -145,6 +149,10 @@ export default function App() {
     createLog('Laboratory initialized. Ready for experiments.', 'success'),
     createLog('Awaiting code specimen...', 'info'),
   ]);
+  
+  // Occult loader state
+  const [loaderProgress, setLoaderProgress] = useState(0);
+  const [loaderStatus, setLoaderStatus] = useState('idle');
 
   useEffect(() => {
     const timer = setTimeout(() => setShowWelcome(false), 2000);
@@ -160,7 +168,14 @@ export default function App() {
 
     setLoading(true);
     setError(null);
+    setLoaderStatus('loading');
+    setLoaderProgress(0);
     setConsoleLogs(prev => [...prev, createLog('Initiating code analysis...', 'info')]);
+    
+    // Simulate progress
+    const progressInterval = setInterval(() => {
+      setLoaderProgress(prev => Math.min(prev + 10, 90));
+    }, 200);
     
     try {
       const isPython = code.includes('def ') || code.includes('import ') || 
@@ -172,9 +187,13 @@ export default function App() {
         filename: filename
       });
       
+      clearInterval(progressInterval);
+      setLoaderProgress(100);
+      
       if (res.data.analysis) {
         setAnalysis(res.data.analysis);
         setLanguage(res.data.language || 'javascript');
+        setLoaderStatus('success');
         setConsoleLogs(prev => [...prev, createLog(
           `Analysis complete! Quality score: ${res.data.analysis.qualityScore}/100`, 
           'success'
@@ -182,16 +201,23 @@ export default function App() {
       } else if (res.data.ok && res.data) {
         setAnalysis(res.data);
         setLanguage(res.data.language || 'javascript');
+        setLoaderStatus('success');
         setConsoleLogs(prev => [...prev, createLog('Code analysis successful', 'success')]);
       } else {
         setAnalysis(res.data);
+        setLoaderStatus('success');
         setConsoleLogs(prev => [...prev, createLog('Analysis completed with warnings', 'warning')]);
       }
+      
+      setTimeout(() => setLoaderStatus('idle'), 1000);
     } catch (err) {
+      clearInterval(progressInterval);
       console.error("Analysis error:", err);
       const errorMsg = "Failed to analyze code: " + (err.response?.data?.error || err.message);
       setError(errorMsg);
+      setLoaderStatus('error');
       setConsoleLogs(prev => [...prev, createLog(errorMsg, 'error', err.stack)]);
+      setTimeout(() => setLoaderStatus('idle'), 2000);
     } finally {
       setLoading(false);
     }
@@ -369,6 +395,19 @@ export default function App() {
 
   return (
     <>
+      {/* Occult Summoning Loader - Magical Ritual Circle */}
+      <OccultLoader
+        isActive={loaderStatus !== 'idle'}
+        progress={loaderProgress}
+        status={loaderStatus}
+        message={
+          loaderStatus === 'loading' ? 'Summoning the refactor spirits...' :
+          loaderStatus === 'success' ? 'Ritual complete! The spirits have spoken.' :
+          loaderStatus === 'error' ? 'The ritual has failed... darkness consumes all.' :
+          ''
+        }
+      />
+
       {/* 3D Background - DNA Helix, Energy Orbs, Electric Arcs */}
       {/* Disabled by default for performance - uncomment to enable */}
       {/* <ThreeBackground 
@@ -1198,6 +1237,31 @@ function example() {
             />
           </div>
         )}
+
+        {/* The Eye of the Repository - Living File Tree */}
+        <EyeOfRepository
+          files={analysis && analysis.functions && analysis.functions.length > 0 
+            ? analysis.functions.map((fn, idx) => ({
+                name: fn.name || `Function ${idx + 1}`,
+                type: 'file',
+                score: Math.max(0, 100 - (fn.issues?.length || 0) * 10),
+                smells: fn.issues?.length || 0,
+                path: `function_${idx}`
+              }))
+            : [
+                { name: 'App.jsx', type: 'file', score: 85, smells: 2, path: 'src/App.jsx' },
+                { name: 'utils.js', type: 'file', score: 45, smells: 8, path: 'src/utils.js' },
+                { name: 'api.js', type: 'file', score: 92, smells: 1, path: 'src/api.js' },
+                { name: 'helpers.js', type: 'file', score: 38, smells: 12, path: 'src/helpers.js' },
+                { name: 'config.js', type: 'file', score: 78, smells: 3, path: 'src/config.js' }
+              ]
+          }
+          onFileClick={(file) => {
+            console.log('File clicked:', file);
+            setConsoleLogs(prev => [...prev, createLog(`Opened file: ${file.name}`, 'info')]);
+          }}
+          audioEnabled={false}
+        />
 
         {/* Blood-Ink Console - Gothic Horror Output Panel */}
         <BloodInkConsole 

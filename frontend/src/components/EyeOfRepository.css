@@ -1,0 +1,294 @@
+/* ================================
+   👁️ THE EYE OF THE REPOSITORY
+   Living, watching file tree
+   ================================ */
+
+.eye-of-repository {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1410 50%, #0a0a0a 100%);
+  border: 2px solid #8b4513;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 30px 0;
+  box-shadow: 
+    inset 0 2px 8px rgba(0, 0, 0, 0.8),
+    0 10px 30px rgba(0, 0, 0, 0.9),
+    0 0 20px rgba(139, 69, 19, 0.2);
+}
+
+/* ================================
+   HEADER WITH EYES
+   ================================ */
+
+.repository-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #8b4513;
+}
+
+.repository-title {
+  font-family: 'Special Elite', 'Courier New', monospace;
+  font-size: 1.2rem;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: #8b4513;
+  text-shadow: 0 0 10px rgba(139, 69, 19, 0.5);
+  margin: 0;
+}
+
+/* ================================
+   WATCHFUL EYE
+   ================================ */
+
+.watchful-eye {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.eye-white {
+  width: 36px;
+  height: 36px;
+  background: radial-gradient(circle, #f5f5dc 0%, #e4e4d0 100%);
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 
+    inset 0 2px 4px rgba(0, 0, 0, 0.3),
+    0 2px 8px rgba(139, 0, 0, 0.4);
+  transition: transform 0.15s ease;
+}
+
+.eye-white.blinking {
+  transform: scaleY(0.1);
+}
+
+.eye-pupil {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  background: radial-gradient(circle, #1a1a1a 0%, #000 100%);
+  border-radius: 50%;
+  transition: transform 0.1s ease-out;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.eye-glint {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  box-shadow: 0 0 3px rgba(255, 255, 255, 0.6);
+}
+
+/* ================================
+   FILE LIST
+   ================================ */
+
+.file-list {
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.file-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.file-list::-webkit-scrollbar-track {
+  background: #0a0a0a;
+  border-radius: 4px;
+}
+
+.file-list::-webkit-scrollbar-thumb {
+  background: #8b4513;
+  border-radius: 4px;
+}
+
+.file-list::-webkit-scrollbar-thumb:hover {
+  background: #a0522d;
+}
+
+/* ================================
+   FILE ITEM
+   ================================ */
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 15px;
+  margin: 8px 0;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #1a1a1a;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.file-item:hover {
+  border-color: #8b4513;
+  box-shadow: 0 4px 12px rgba(139, 69, 19, 0.3);
+}
+
+.file-item.dangerous {
+  border-color: rgba(139, 0, 0, 0.5);
+  background: rgba(139, 0, 0, 0.05);
+  animation: dangerPulse 2s ease-in-out infinite;
+}
+
+@keyframes dangerPulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(139, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(139, 0, 0, 0.6);
+  }
+}
+
+.file-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.file-name {
+  flex: 1;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.95rem;
+  color: #d4a574;
+  font-weight: 500;
+}
+
+.file-score {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: 'Courier New', monospace;
+}
+
+.file-score.score-good {
+  background: rgba(57, 255, 20, 0.2);
+  color: #39ff14;
+  box-shadow: 0 0 8px rgba(57, 255, 20, 0.3);
+}
+
+.file-score.score-medium {
+  background: rgba(255, 184, 107, 0.2);
+  color: #ffb86b;
+  box-shadow: 0 0 8px rgba(255, 184, 107, 0.3);
+}
+
+.file-score.score-bad {
+  background: rgba(255, 0, 64, 0.2);
+  color: #ff0040;
+  box-shadow: 0 0 8px rgba(255, 0, 64, 0.3);
+}
+
+.danger-indicator {
+  font-size: 1.2rem;
+  filter: drop-shadow(0 0 4px rgba(255, 0, 64, 0.8));
+}
+
+/* ================================
+   HEARTBEAT MONITOR
+   ================================ */
+
+.heartbeat-monitor {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+}
+
+.heartbeat-svg {
+  width: 80px;
+  height: 30px;
+}
+
+.monitor-text {
+  font-size: 0.75rem;
+  font-family: 'Courier New', monospace;
+  color: inherit;
+  white-space: nowrap;
+}
+
+/* ================================
+   EMPTY STATE
+   ================================ */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  opacity: 0.5;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  animation: eyeBlink 3s ease-in-out infinite;
+}
+
+@keyframes eyeBlink {
+  0%, 90%, 100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+
+.empty-text {
+  font-size: 1.1rem;
+  color: #8b4513;
+  font-style: italic;
+  font-family: 'Special Elite', serif;
+}
+
+/* ================================
+   RESPONSIVE
+   ================================ */
+
+@media (max-width: 768px) {
+  .repository-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .file-item {
+    flex-wrap: wrap;
+  }
+
+  .heartbeat-monitor {
+    position: static;
+    transform: none;
+    margin-top: 10px;
+    width: 100%;
+  }
+}

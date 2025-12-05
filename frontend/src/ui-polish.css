@@ -1,0 +1,608 @@
+/* ================================
+   ✨ COMPREHENSIVE UI POLISH
+   Deep fixes for every element
+   ================================ */
+
+/* === HERO SECTION === */
+.hero-section {
+  position: relative;
+  z-index: 10;
+  padding: 40px 0;
+  margin-bottom: 50px;
+}
+
+.hero-icon {
+  position: relative;
+  display: inline-block;
+}
+
+.codex-title {
+  line-height: 1.2;
+  margin: 20px 0;
+}
+
+.title-text,
+.title-accent {
+  display: inline-block;
+  margin: 0 5px;
+}
+
+.codex-subtitle {
+  max-width: 600px;
+  margin: 20px auto 30px;
+}
+
+.language-badge {
+  margin: 20px auto 0;
+  display: inline-flex;
+}
+
+/* === TAB SWITCHER === */
+.tab-switcher {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin: 30px 0;
+  padding: 0;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  flex: 1 1 auto;
+  min-width: 180px;
+  max-width: 300px;
+  padding: 15px 25px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid #1a1a1a;
+  border-radius: 8px;
+  color: #999;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #333;
+  transform: translateY(-2px);
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(6, 182, 212, 0.2));
+  border-color: #7c3aed;
+  color: #06b6d4;
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+}
+
+.tab-icon {
+  font-size: 1.3rem;
+}
+
+/* === EDITOR SECTION === */
+.editor-section {
+  margin: 30px 0;
+  width: 100%;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding: 0 5px;
+}
+
+.codex-input,
+.repo-input {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.repo-input {
+  min-height: 50px;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, rgba(10, 5, 5, 0.95) 0%, rgba(5, 5, 5, 0.98) 100%);
+  border: 2px solid #1a1a1a;
+  color: #39ff14;
+  border-radius: 8px;
+  font-family: 'Fira Code', monospace;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.repo-input:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+}
+
+.repo-hint {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #666;
+  font-style: italic;
+}
+
+/* === ACTION BUTTONS === */
+.action-section {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin: 40px 0;
+  flex-wrap: wrap;
+}
+
+.primary-btn,
+.secondary-btn,
+.repo-analyze-btn {
+  position: relative;
+  overflow: hidden;
+  min-width: 220px;
+  padding: 18px 40px;
+}
+
+.primary-btn::before,
+.secondary-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.primary-btn:hover::before,
+.secondary-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* === RESULTS CONTAINER === */
+.results-container,
+.suggestions-container {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 40px 0;
+  clear: both;
+}
+
+.results-header,
+.suggestions-header {
+  position: relative;
+  padding-bottom: 25px;
+  margin-bottom: 35px;
+}
+
+.results-header::after,
+.suggestions-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #7c3aed, transparent);
+}
+
+/* === SCORE SHOWCASE === */
+.score-showcase {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  padding: 40px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.circular-progress {
+  flex-shrink: 0;
+  margin: 0 auto;
+}
+
+.score-details {
+  flex: 1;
+  min-width: 300px;
+}
+
+.score-stats {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.stat-item {
+  min-width: 100px;
+}
+
+/* === SMELLS GRID === */
+.smells-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.smell-card {
+  min-height: 100px;
+}
+
+/* === FUNCTION CARDS === */
+.function-card {
+  margin: 25px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.function-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.function-metrics {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* === SUGGESTION CARDS === */
+.suggestion-card {
+  margin: 30px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.suggestion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.suggestion-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+  flex-wrap: wrap;
+}
+
+.apply-btn,
+.diff-btn {
+  flex: 1 1 200px;
+  min-width: 180px;
+}
+
+/* === DIFF PANEL === */
+.diff-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 1200px;
+  max-height: 90vh;
+  overflow: auto;
+  z-index: 2000;
+  background: #0d0d0d;
+  border: 2px solid #7c3aed;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+}
+
+.diff-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  min-height: 400px;
+}
+
+.diff-content {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+/* === COBWEB GRAPH === */
+.cobweb-container {
+  margin: 50px 0;
+  padding: 30px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #1a1a1a;
+  border-radius: 8px;
+  min-height: 400px;
+}
+
+/* === ALERTS === */
+.alert {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 25px 0;
+}
+
+.alert-warning {
+  background: rgba(217, 119, 6, 0.1);
+  border: 1px solid rgba(217, 119, 6, 0.3);
+}
+
+/* === TIME MACHINE RESULTS === */
+.time-machine-results {
+  margin-top: 40px;
+}
+
+.time-machine-subtitle {
+  color: #999;
+  font-size: 1rem;
+  margin-top: 10px;
+  font-family: 'Fira Code', monospace;
+}
+
+.time-machine-insights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.trend-card,
+.insight-card {
+  padding: 25px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid #1a1a1a;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.trend-icon,
+.insight-icon {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+}
+
+.timeline-graph {
+  display: flex;
+  gap: 15px;
+  align-items: flex-end;
+  padding: 30px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  min-height: 300px;
+  overflow-x: auto;
+}
+
+.timeline-point {
+  flex: 1;
+  min-width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.point-bar {
+  width: 100%;
+  min-height: 40px;
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.point-bar.good {
+  background: linear-gradient(to top, #39ff14, #42ff8a);
+}
+
+.point-bar.medium {
+  background: linear-gradient(to top, #d97706, #fbbf24);
+}
+
+.point-bar.bad {
+  background: linear-gradient(to top, #8b0000, #ff6b6b);
+}
+
+.commits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.commit-card {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid #1a1a1a;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.commit-card:hover {
+  border-color: #7c3aed;
+  transform: translateX(5px);
+}
+
+.commit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.commit-meta {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  color: #999;
+}
+
+/* === REPO ACTIONS === */
+.repo-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+
+.export-btn {
+  flex: 1;
+  min-width: 200px;
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #7c3aed, #06b6d4);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.export-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4);
+}
+
+/* === FOOTER === */
+.footer {
+  margin-top: 80px;
+  padding: 40px 0;
+  clear: both;
+}
+
+/* === RESPONSIVE REFINEMENTS === */
+@media (max-width: 1024px) {
+  .codex-container {
+    width: 95%;
+    padding: 40px 30px;
+  }
+  
+  .score-showcase {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .score-stats {
+    justify-content: center;
+  }
+  
+  .diff-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .codex-container {
+    padding: 30px 20px;
+  }
+  
+  .hero-icon {
+    font-size: 3rem;
+  }
+  
+  .codex-title {
+    font-size: 2rem;
+  }
+  
+  .title-accent {
+    font-size: 2.5rem;
+  }
+  
+  .tab-switcher {
+    flex-direction: column;
+  }
+  
+  .tab-btn {
+    max-width: 100%;
+  }
+  
+  .action-section {
+    flex-direction: column;
+  }
+  
+  .primary-btn,
+  .secondary-btn {
+    width: 100%;
+    min-width: auto;
+  }
+  
+  .function-header,
+  .suggestion-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .function-metrics {
+    justify-content: flex-start;
+  }
+  
+  .suggestion-actions {
+    flex-direction: column;
+  }
+  
+  .apply-btn,
+  .diff-btn {
+    width: 100%;
+  }
+  
+  .smells-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .time-machine-insights {
+    grid-template-columns: 1fr;
+  }
+  
+  .timeline-graph {
+    padding: 20px;
+  }
+  
+  .diff-panel {
+    width: 95vw;
+    max-height: 95vh;
+  }
+}
+
+/* === SMOOTH SCROLLING === */
+html {
+  scroll-behavior: smooth;
+}
+
+/* === SELECTION STYLING === */
+::selection {
+  background: rgba(124, 58, 237, 0.3);
+  color: #fff;
+}
+
+/* === FOCUS STATES === */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
+}
+
+/* === LOADING STATES === */
+.loading-cobweb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: #999;
+  font-size: 1.1rem;
+}
