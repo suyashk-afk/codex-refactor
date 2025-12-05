@@ -603,8 +603,8 @@ Respond in Mr. Smith's style: professional, direct, technical. Focus on the MOST
 // ==========================
 // Server Listen
 // ==========================
-const PORT = 4000;
-app.listen(PORT, () => {
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n🚀 Server listening on port ${PORT}`);
   console.log(`📦 Supporting JavaScript/TypeScript and Python refactoring!`);
   
