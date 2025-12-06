@@ -1,0 +1,8 @@
+{
+  "name": "Deployment Readiness Check",
+  "description": "Validate deployment configuration before pushing to production",
+  "trigger": "manual",
+  "action": "sendMessage",
+  "message": "Running deployment readiness checks:\n1. Verify environment variables are configured (VITE_API_URL, GEMINI_API_KEY, FRONTEND_URL)\n2. Check for hardcoded URLs or API keys in code\n3. Ensure all dependencies are in package.json\n4. Validate CORS configuration for production domains\n5. Test build scripts execute successfully\n6. Confirm .env files are in .gitignore",
+  "enabled": true
+}

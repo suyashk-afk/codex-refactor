@@ -1,0 +1,9 @@
+{
+  "name": "API Contract Validation",
+  "description": "Ensure API contracts remain consistent when endpoints are modified",
+  "trigger": "onFileSave",
+  "filePattern": "{backend/server.js,codex_mcp/mcp_server.py}",
+  "action": "sendMessage",
+  "message": "API endpoint modified. Validate:\n1. Request/response schemas remain consistent\n2. Error handling follows established patterns\n3. Frontend API calls match backend endpoints\n4. MCP tool interfaces align with server implementation\n5. API documentation is updated",
+  "enabled": true
+}

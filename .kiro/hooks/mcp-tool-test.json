@@ -1,0 +1,8 @@
+{
+  "name": "MCP Tool Testing",
+  "description": "Test all MCP tools after modifications",
+  "trigger": "manual",
+  "action": "sendMessage",
+  "message": "Testing MCP tools:\n1. Validate tool registration and discovery\n2. Test analyze_code with sample JavaScript and Python\n3. Test suggest_refactors with complex functions\n4. Test detect_code_smells with known issues\n5. Test get_quality_score for quick checks\n6. Test analyze_repository_history with Git repos\n7. Verify error handling for invalid inputs\n8. Check response formatting matches MCP protocol",
+  "enabled": true
+}

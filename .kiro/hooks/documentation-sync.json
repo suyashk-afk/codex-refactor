@@ -1,0 +1,9 @@
+{
+  "name": "Documentation Sync Reminder",
+  "description": "Remind to update documentation when key implementation files change",
+  "trigger": "onFileSave",
+  "filePattern": "{backend/server.js,codex_mcp/mcp_server.py,backend/commit-analyzer.js,backend/refactor-engine/**/*.js}",
+  "action": "sendMessage",
+  "message": "Key implementation file modified. Consider updating:\n- README.md with any new features\n- API documentation for endpoint changes\n- Code comments for complex logic\n- KIRO_AND_MCP_USAGE.md if MCP tools changed",
+  "enabled": true
+}

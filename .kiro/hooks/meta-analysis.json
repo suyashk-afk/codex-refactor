@@ -1,0 +1,9 @@
+{
+  "name": "Meta Code Quality Check",
+  "description": "Run our own code quality tools on the analysis engine code",
+  "trigger": "onFileSave",
+  "filePattern": "backend/refactor-engine/**/*.js",
+  "action": "sendMessage",
+  "message": "Analysis engine code modified. Running meta-analysis:\n- Check complexity of analysis algorithms\n- Ensure code that analyzes quality maintains high quality\n- Verify consistent patterns across analyzers\n- Document complex AST traversal logic",
+  "enabled": true
+}

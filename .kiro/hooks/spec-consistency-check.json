@@ -1,0 +1,9 @@
+{
+  "name": "Spec Consistency Check",
+  "description": "Verify spec consistency when requirements or design documents are updated",
+  "trigger": "onFileSave",
+  "filePattern": ".kiro/specs/**/*.md",
+  "action": "sendMessage",
+  "message": "A spec file was updated. Please verify:\n1. Requirements align with design documents\n2. All acceptance criteria have corresponding tasks\n3. Task completion status matches implementation\n4. Related spec files are updated consistently",
+  "enabled": true
+}

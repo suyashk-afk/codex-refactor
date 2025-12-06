@@ -1,0 +1,8 @@
+{
+  "name": "Pre-Commit Quality Check",
+  "description": "Analyze code quality before committing changes",
+  "trigger": "manual",
+  "action": "sendMessage",
+  "message": "Pre-commit quality check:\n1. Analyze modified files for quality regressions\n2. Ensure no console.log or debug code remains\n3. Verify commit message follows conventional format\n4. Check that related tests are updated\n5. Confirm no sensitive data (API keys, passwords) in code",
+  "enabled": true
+}
