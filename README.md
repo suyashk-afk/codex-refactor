@@ -76,7 +76,7 @@ Every other tool shows you code quality NOW. **We show you the STORY.**
 - Track your improvement as a developer
 - Visualize your coding journey
 
-**SonarQube costs $$$$ for this. We do it free. No one else at this hackathon will have this.**
+**SonarQube costs $$$$ for this. We do it free.**
 
 ### 2. **True Frankenstein Architecture**
 Most projects claim to be "Frankenstein" but just use multiple libraries. We **actually stitched together incompatible runtimes**:
